@@ -27,7 +27,7 @@ Il materiale copre diversi aspetti fondamentali della progettazione e gestione d
 
 ---
 
-## Struttura della repository
+## Struttura della raccolta
 
 - `./esercizi/`: contiene script SQL e query sviluppate come esercizi pratici;
 - `./Progetti/`: progetti completi con diagrammi UML e modelli di database;
