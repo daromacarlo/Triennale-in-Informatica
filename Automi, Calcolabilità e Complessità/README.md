@@ -11,4 +11,5 @@
 ---
 📄 [Esercizi Risolti](https://github.com/daromacarlo/ACC/blob/main/esercizi_annotato.pdf)  
 > Raccolta di esercizi.
-
+> 
+![Alan-Turning-Computers](https://github.com/user-attachments/assets/03658861-4fdf-42ee-9d3c-a2143a0be2a8)
