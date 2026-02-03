@@ -13,25 +13,25 @@
 ## 📌 Contenuto
 
 ### Esercizi Annotati per l’Esame Scritto
-📄 [Esercizi Annotati (PDF)](https://github.com/CarloDaRomadev/Database/blob/main/quaderno%20esercizi/Esercizi_annotato.pdf)  
+📄 [Esercizi Annotati (PDF e .xopp)](https://github.com/daromacarlo/Triennale-in-Informatica/tree/main/Basi%20di%20dati/Basi%20di%20dati%20MODULO%201/quaderno%20esercizi)  
 > Raccolta di esercizi svolti e commentati per la preparazione allo scritto.
 
 ---
 
 ### Teoria della Normalizzazione
-📄 [Appunti – Normalizzazione (PDF)](https://github.com/CarloDaRomadev/Database/files/14351193/appunti.teoria.della.normalizzazione.pdf)  
+📄 [Appunti – Normalizzazione (PDF)](https://github.com/daromacarlo/Triennale-in-Informatica/blob/main/Basi%20di%20dati/Basi%20di%20dati%20MODULO%201/appunti%20teoria%20della%20normalizzazione.pdf)  
 > Spiegazione schematica delle **forme normali**, **dipendenze funzionali**, **violazioni** e **casi di esempio**.
 
 ---
 
 ### Organizzazione Fisica dei Dati
-📄 [Appunti – Organizzazione Fisica (PDF)](https://github.com/CarloDaRomadev/Database/files/14363192/appunti.Organizzazione.fisica.pdf)  
+📄 [Appunti – Organizzazione Fisica (PDF)](https://github.com/daromacarlo/Triennale-in-Informatica/blob/main/Basi%20di%20dati/Basi%20di%20dati%20MODULO%201/appunti%20teoria%20della%20normalizzazione.pdf)  
 > Approfondimento su **indici**, **file organizzati**, **hashing**, e tecniche di memorizzazione dei dati su disco.
 
 ---
 
 ### Controllo della Concorrenza
-📄 [Appunti – Concorrenza (PDF)](https://github.com/CarloDaRomadev/Database/files/14365267/appunti.Controllo.concorrenza.pdf)  
+📄 [Appunti – Concorrenza (PDF)](https://github.com/daromacarlo/Triennale-in-Informatica/blob/main/Basi%20di%20dati/Basi%20di%20dati%20MODULO%201/appunti%20Controllo%20concorrenza.pdf)  
 > Introduzione ai **problemi di concorrenza**, **schedulazione**, **serializzabilità**, e tecniche come **lock-based protocol** e **timestamp ordering**.
 
 ---
