@@ -1,0 +1,31 @@
+Cliente
+	nome
+	indirizzomail
+
+Ristorante
+	nome
+	partita iva (stringa numerica)
+	indirizzo
+	città
+	insieme cucina offerta
+
+cucina
+	nome
+
+prenotazione
+	promo [0..1]
+	giorno
+	data
+	ora
+	numero commensali
+	accettata / rifutata
+		completata / non usata
+			annullata
+promo
+	percentuale di sconto
+	periodo
+	giorni
+	numeroCoperti giornalieri massimi
+
+periodo chiusura
+	lasso di tempo
