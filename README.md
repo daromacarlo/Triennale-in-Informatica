@@ -20,4 +20,4 @@ Raccolta di materiale didattico, appunti, esercizi e progetti relativi al corso 
 * **Link:** [Pernosphere](https://github.com/daromacarlo/Pernosphere)
 
 ---
-*Repository personale a scopo didattico, non sostituisce le fonti ufficiali può contenere errori.*
+*Repository personale a scopo didattico, non sostituisce le fonti ufficiali, può contenere errori.*
