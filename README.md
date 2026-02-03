@@ -3,15 +3,12 @@
 Raccolta di materiale didattico, appunti, esercizi e progetti relativi al corso di Laurea Triennale in Informatica presso Sapienza Università di Roma.
 
 ## Materie
+| [Algebra](./Algebra)                                               | [Architettura degli Elaboratori](./Architetture%20degli%20elaboratori) | [Algoritmi](./Algoritmi)                                                           |
+| :----------------------------------------------------------------- | :--------------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
+| [Probabilità](./Probabilità)                                       | [Sistemi Operativi](./Sistemi%20operativi)                             | [Automi, Calcolabilità e Complessità](./Automi,%20Calcolabilità%20e%20Complessità) |
+| [Economia Aziendale](./Economia%20aziendale)                       | [Reti di Elaboratori](./Reti%20di%20elaboratori)                       | [Basi di Dati](./Basi%20di%20dati)                                                 |
+| [Fondamenti di Programmazione](./Fondamenti%20di%20Programmazione) | [Sicurezza](./Sicurezza)                                               |                                                                                    |
 
-| Fondamenti e Matematica | Sistemi e Reti | Teoria e Applicazioni |
-| :--- | :--- | :--- |
-| [Algebra](./Algebra) | [Architettura degli Elaboratori](./Architetture%20degli%20elaboratori) | [Algoritmi](./Algoritmi) |
-| [Probabilità](./Probabilità) | [Sistemi Operativi](./Sistemi%20operativi) | [Automi, Calcolabilità e Complessità](./Automi,%20Calcolabilità%20e%20Complessità) |
-| [Economia Aziendale](./Economia%20aziendale) | [Reti di Elaboratori](./Reti%20di%20elaboratori) | [Basi di Dati](./Basi%20di%20dati) |
-| [Fondamenti di Programmazione](./Fondamenti%20di%20Programmazione) | [Sicurezza](./Sicurezza) | |
-
----
 
 ## Progetti
 
