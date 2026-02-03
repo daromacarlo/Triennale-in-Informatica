@@ -16,10 +16,10 @@ Raccolta di materiale didattico, appunti, esercizi e progetti relativi al corso 
 ## Progetti
 
 ### Web Architecture & System Architecture (WASA)
-* **Link:** [WASA Project](https://github.com/daromcarlo/WASA)
+* **Link:** [WASA Project](https://github.com/daromacarlo/WASA)
 
 ### Artificial Intelligence Laboratory (AI Lab)
-* **Link:** [Pernosphere](https://github.com/daromcarlo/Pernosphere)
+* **Link:** [Pernosphere](https://github.com/daromacarlo/Pernosphere)
 
 ---
 *Repository personale a scopo didattico, non sostituisce le fonti ufficiali può contenere errori.*
