@@ -1,0 +1,352 @@
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+-RIASSUNTO GRAFI:
+
+
+
+
+def DFS(G)
+
+	vis = [0...0]
+	stack = []
+	x = random(V(G))
+	stack.push(x)
+	vis[x] = 1
+	while stack is not empty{
+		v = stack.top()
+		if vis[v.adiacenti[0]] == 0{
+			w = v.adiacenti[0]
+			stack.push(w)
+			vis[w] = 1
+		}
+		else{
+			v.adiacenti.remove[0]
+		}
+		stack.pop()
+	}
+	return
+
+//O(N+M)
+
+-----------------------------------------------------
+
+def DFS_RICORSIVO(G, x = random(V(G)), vis = [0...0])
+	
+	vis[x] = 1
+	for w in x.adjacents(){
+		if vis[w] == 0{
+			DFS_RICORSIVO(G, w, vis)
+		}
+	}
+
+//O(N+M)
+
+-----------------------------------------------------
+
+def DFS_CON_CONTATORE(G)
+	
+	vis[0...0]
+	stack = []
+	CC = [[t1, T1]...[tn, Tn]]
+	Counter = 0
+	x = random(V(G))
+	stack.push(x)
+	while stack is not empty{
+		v = stack.top()
+		v.CC[t] = counter
+		counter ++
+		if v.adiacenti[0] == 0{
+			w = v.adiacenti[0]
+			stack.push(w)
+		}
+		else{
+			v.adiacenti.remove[0]
+		}
+		v.CC[T] = contatore
+		stack.pop()
+	}
+	return CC
+
+//O(N+M)
+
+-----------------------------------------------------
+
+def DFS_CON_CONTATORE_RICOCORSIVO(G, CC, counter = 0, vis = [0...0], x = random(V(G)))
+	
+	vis[x] = 1
+	x.CC[t] = counter
+	counter ++
+	for w in x.adjacents(){
+		if vis[w] == 0{
+			DFS_CON_CONTATORE_RICOCORSIVO(G, CC, counter, vis, w)
+		}
+	}
+	x.CC[T] = counter
+
+//O(N+M)
+
+-----------------------------------------------------
+
+def TROVARE_CICLO(G, P = [0...0], v = random(V(G)), x = v)
+
+	P[v] = -x
+	for w in v.adjacents(){
+		if P[w] == 0 {
+			z = TROVARE_CICLO(G, P, w, v)
+			if z != 0{
+				P[v] = -P[v]
+				return z
+			}
+		}
+		else if P[w] < 0{
+			if w != v{
+				P[w] = 0
+				P[v] = x
+				return v
+			}
+		}
+	}
+	P[v] = x
+	return 0
+	
+//O(N+M)
+
+def IDENTIFICA_CICLO()
+	w <- DFS_CYCLE(G, u, u, P)
+	L <- lista vuota
+	WHILE w > 0 DO
+	L.append(w)
+	w <- P[w]
+	RETURN L
+
+-----------------------------------------------------
+
+def TROVA_COMPONENTI(v, c, G)
+
+	Comp[v] = c 
+	for w in v.adjacents{
+		TROVA_COMPONENTI(w, c, G)
+	}
+
+def AUX(G)
+
+	Comp = [0...0]
+	counterComp = 0
+	for v in V(G)
+		if Comp[v] == 0{
+			counterComp ++
+			TROVA_COMPONENTI(v, conterComp,G)
+		}
+	}
+
+//O(N+M)
+
+-----------------------------------------------------
+
+def TROVA_TOPOLOGICO(v, G, ord)
+
+	vis[v] = 1
+	for w in v.adjacents(){
+		if vis[w] == 0{
+			TROVA_TOPOLOGICO(v, G)
+		}
+	}
+	ord.insert(v)
+
+
+def AUX(G)
+
+	ord = []
+	vis = [0...0] 
+	for v in V(G)
+		if vis[v] == 0{
+			TROVA_TOPOLOGICO(v, G, ord)
+		}
+	}
+	return ord
+
+//O(N+M)
+
+-----------------------------------------------------
+
+def POZZO_UNIVERSALE(G //rappresentato come matrice di adiacenza)
+
+	x = random(V(G))
+	i = 0
+	while i != N{
+		if G[x][i] == 0{
+			i++
+		}
+		else x = i
+	}
+
+	while i != N{
+		if G[i][x] == 1 and G[x][i] == 0
+		i++
+	}
+	return x
+
+
+//O(N+M)
+
+-----------------------------------------------------
+
+def TROVA_PONTI(G, x = random(V(G)), v = x, ponti = [], t = [0...0], c)
+
+	t[x] <= c 
+	c++
+	back = t[x]
+	for w in x.adjacents(){
+		if t[w] == 0{
+			b = TROVA_PONTI(G, w, v ponti, t, c)
+			back = min(b, back)
+		}
+		else if (w != z){
+			back = min(t[w], back)
+		}
+	}
+	if back == t[x]
+		ponti += [(x,v)]
+	return back
+
+//O(N+M)
+
+-----------------------------------------------------
+
+def TROVA_SCC(G, x = random(V(G)), v = x, t = [0...0], c, C = stack, counterSCC = 0)
+
+	c ++
+	t[x] = - c
+	back = - t[x]
+	C.push(x)
+	for w in x.adjacents{
+		if t[w] == 0
+			b = TROVA_SCC(G, w, x, t, c, C, counterSCC)
+			back = min(b,back)
+		if t[w] < 0
+			back = min(back, -t[w])
+	}
+	if back == -t[x]{
+		counterSSC ++
+		while y = C.pop() != x
+			t[y] = counterSSC
+	}
+	return back
+
+//O(N+M)
+
+-----------------------------------------------------
+
+def BFS(G, x = random(V(G)))
+
+	queue = []
+	d = 0
+	dist = [0...0]
+	P = [-1,...,-1] 						//vettore dei padri
+	queue.enqueue(x)
+	dist[x] = 0
+	P[x] = x
+	while queue is not empty{
+		x = queue.dequeue()
+		for w in x.adjacents(){
+			if P[w] == -1{
+				dist[w] = dist[x] + 1
+				P[w] = x
+				queue.enqueue(w)
+			}
+		}
+	}
+	return P, dist
+
+//O(N+M)
+
+-----------------------------------------------------
+
+def BFS_INSIEMI(G, x = random(V(G), X, Y)
+
+	//inserisco tutti i nodi di X in queue
+	queue = []
+	dist = [-1,...,-1]
+	for x in X{
+	dist[x] = 0
+	queue.enqueue(x)
+	while queue is not empty{
+		v = queue.dequeue()
+		for w in v.adjacents(){
+			if dist[w] == -1{
+				dist[w] = dist[x] + 1
+			}
+		}
+	}
+	for y in Y{
+		min = infinite
+		if dist[y] < min{
+			min = dist[y]
+		}
+	}
+	return min
+
+//O(N+M)
+
+-----------------------------------------------------
+
+def DIST_RIC(P, dist, y)
+
+	if P[y] == y{
+		dist[y] = 0
+		return 0
+	}
+	if P[y] > 0{
+		dist[y] = dist[P[y]] + 1
+		retutn dist[y]
+	}
+	dist[y] = DIST_RIC(P, dist, P[y]) + 1
+	return dist[y]
+
+def AUX(P, dist)
+
+	for y in P{
+		DIST_RIC(P, dist, y)
+	}
+	return dist
+
+//O(n)
+
+---------------------------------------------------
+
+def DIJSKRA(G, y)
+	
+	heap = []
+	P = [0...0]
+	dist = [infinito...infinito]
+	for x in G{
+		dist[x] = 0
+		if x != y{
+			heap = [x, infinito]
+		}
+		else{
+			heap += [x, 0]
+			P[x] = x
+		}
+	}
+	while heap is not empty{
+		v = min(heap)
+		for w in v.adjacents(){
+			if dist[w] > dist[v] + d(w,v){
+				dist[w] = dist[v] + d(w,v)
+				heap.update(w)
+				P[w] = v
+			}
+		}
+		heap.remove(v)
+	}
+
+//O((N+M)*log(N))
+
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

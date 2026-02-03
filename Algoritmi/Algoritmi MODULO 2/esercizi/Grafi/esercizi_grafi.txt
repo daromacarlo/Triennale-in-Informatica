@@ -1,0 +1,415 @@
+ESERCIZI GRAFI
+
+Un grafo diretto si dice diretto aciclico (DAG) se non contiene alcun ciclo diretto. Modificare l’algoritmo della ricerca
+in profondità in maniera da poter controllare se un grafo diretto è aciclico o no; è possibile fare questa modifica in modo che il controllo avvenga in O(n+m)?
+
+def cerca_cicli(G, P = [0,...,0], v = random(V(G)), x = v){  //aux
+	P[v] = -x
+	for w in v.adiacenti(){
+		if P[w] == 0{
+			z = cerca_cicli(G, P, w ,v)
+			if z != 0{
+				P[v] = - P[v]
+				return z
+			}
+		}
+		else{
+			if w != x{
+				P[w] = 0
+				P[v] = x
+				return v
+			}
+		}
+	}
+	P[v] = x
+	return 0
+}
+
+// costo = O(n + m)
+
+def aciclico_test(G){
+	P = [0,...,0]
+	cerca_cicli(G, P, v = random(V(G)), x = v)
+	i = 0
+	while P[i] != 0 && i != n{
+		i ++
+	}
+	if i == n{
+		return true
+	}
+	else{
+		return false
+	}
+}
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+5 marzo 2024 - esercizio 2 #3
+
+def DFS_biColorazione(G, color, x){
+	C = 0
+	stack = []
+
+	color[x] = C
+	cambia(C)							//funzione che fa diventare C = 1 se C == 0 e viceversa. O(1)
+
+	stack.push(x)
+	while stack is not empty{
+		v = stack.pop()
+		for w in v.adiacenti(){
+			stack.push(w)
+			if color[w] == -1{
+				color[w] = C
+			}
+			elif color[w] == color[v]{
+				return false
+			}
+		}
+		cambia(C)					   //funzione che fa diventare C = 1 se C == 0 e viceversa. O(1)
+	return true
+}
+
+def bipartito_test(G){
+	color = [-1,...,-1]
+    for v in V(G){
+	 	if color[v] == -1{
+	 		esito = DFS_biColorazione(G, color, x)
+	 	}
+	 	if esito == false{
+	 		return false
+	 	}
+	}
+	return true
+}
+
+
+-----------------------------------------------------------------
+// versione ricorsiva
+
+def DFS_bicolorazione_rec(G, color, C, x)
+	color[x] = C
+	for w in x.adiacenti(){
+		if color[w] == -1{
+			DFS_bicolorazione_rec(G, color, cambia(C), w)
+		}
+		elif color[w] == color[x]{
+			return false
+		}
+	}
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+cicli #4
+
+def trova_ciclo(G, P = [-1,...,-1], v, x)
+	P[v] = x
+	for w in v.adiacenti(){
+		if P[w] == -1{
+			trova_ciclo(G, P, w, v)
+		}
+		else {
+			P[w] = 0
+			return v
+		}
+	}
+
+def identifica_ciclo(G)
+	z = trova_ciclo(G, P, v = random(V(G)), x = v)
+	ciclo = []
+	while z != 0{					
+		ciclo.append(z)
+		z = P[z]
+	}
+		return ciclo
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+cammini #5
+
+def esiste_cammino(G, x, y)
+	vis = [0,...,0]
+	stack = []
+	stack.push(x)
+	vis[x] = 1
+	while stack is not empty{
+		v = stack.pop()
+		for w in v.adiacenti(){
+			if vis[w] == 0{
+				vis[x] = 1
+				stack.push(w)
+			}
+			if w == y{
+				return true
+			}
+		}
+	}
+	return false
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+componenti connesse #6
+
+def componenti_connesse(G)
+	comp = [0,...,0]
+	C = 0
+	for v in V(G){
+		if comp[v] == 0{
+			assegna_componente(vis, comp, v, C++)
+		}
+	}
+	return comp
+
+def assegna_componente(vis, comp, v, C)
+	comp[v] = C
+	for w in v.adiacente(){
+		assegna_componente(vis, comp, w, C)
+	}
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+avanti, indietro & attraversamento #7
+
+def DFS_CON_CONTATORE_rec(G, CC, counter, x, vis, albero){
+	//CC = lista di liste da due elementi dove il primo elemento indica l'istante di apertura del nodo mentre il secondo elemento indica l'istante di chiusura del
+	
+	vis[x] = 1
+	x.CC[t] = counter
+	for w in x.adiacenti(){
+		if vis[w] == 0{
+			DFS_CON_CONTATORE(G, CC, counter++, w, vis)
+			albero += [(x, w)]
+		}
+	}
+	x.CC[T] = counter
+	}
+}
+return CC, albero
+
+//O(n+m)
+
+def Identifica_archi(G)
+	albero = []
+	CC, albero = DFS_CON_CONTATORE_rec(G, CC = [[t1, T1],...,[tn, Tn]], counter = 0, x = random(V(G)), vis = [0,...,0], albero = [])
+	annanze = [] 
+	arrete = []
+	attraversamento = []
+	for (x,y) in E(G) and not in albero{											//per ogni arco in E(G)
+		if (x.CC[t] < y.CC[t]) && (x.CC[T] >= y.CC[T]){								//se apro e chiudo y tra l'apertura e la chiusura di x
+			annaze += [(x,y)]
+		}
+		if (y.CC[t] < x.CC[t]) && (y.CC[T] >= x.CC[T]){								//se apro e chiudo x tra l'apertura e la chiusura di y
+			arrete += [(x,y)]
+		else{
+			attraversamento += [(x,y)]												//altrimenti
+		}
+	}
+	return annanze, arrete, attraversamento
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ALGORITMO CHE OPERA IN O((n+m)log(n))
+
+def Opt_Dijkstra(G, x, y)
+	dist = [inf,...,inf]
+	dist[x] = 0
+	haep = [value, key]
+	heap.add(x, 0)
+	for v in V(G){
+		if v != x{
+			heap.add(v, inf)
+		}
+	}
+	while queue is not empty{
+		v = min(heap.key)
+		for w in v.adiacenti{
+		if dist[w] > dist[v] + d(v,w){
+			dist[w] = dist[v] + d(v,w)
+			w.update_key(dist[v] + d(v,w))
+			}
+		}
+		heap.remove(v)
+	}
+	return dist[y]
+
+
+ALGORITMO CHE OPERA IN O((n+m)n)
+
+def unOpt_Dijkstra(G,x)
+	dist = [0,...,0]
+	dist[x] = 0
+	R += [x]
+	while R != V(G){
+		min = infinito
+		min_arco = null
+		for (x,y) | x in R and y not in R{
+			if dist[x] + d(x,y) < min{
+				min = dist[x] + d(x,y)
+				min_arco = (x,y)
+			}
+		}
+		R.add(min_arco[1])
+		dist[min_arco[1]] = min
+	}
+	return dist[y]
+
+riscrivo per esercizio
+ALGORITMO CHE OPERA IN O((n + m)log(n))
+	def unopt_dijskra(G, x){
+	R = []
+	dist = [0,...,0]
+	R += [x]
+	dist[x] = 0
+	while R != V(G){
+		min  = infinito
+		min_arco = null
+		for (x, y) | x in R && y not in R{
+			if dist[x] + d(x, y) > min{
+				min dist[x] + d(x, y)
+				min_arco = (x, y)
+			}
+		}
+		R += [min_arco[1]]
+		dist[y] = min
+	}
+	return dist
+
+
+ALGORITMO CHE OPERA IN O((n+m)log(n))
+
+def Opt_Dijkstra(G, x){
+	dist = [infinito,...,infinito]
+	heap = [value, key]
+	heap.add(x,0)ù
+	for v in V(G){
+		if v != x{
+		heap.add(v, inf)
+	}
+	while heap is not empty(){
+		v = heap.min(key)
+		for w in v.top(){
+			if dist[v] + d(v, w) < dist[w]{
+				dist[w] = dist[v] + d(v,w)
+				w.update_key(dist[v] + d(v,w))
+			}
+		}
+		heap.remove(v)
+	}
+	return dist
+}
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+14 marzo 2024 - esercizio 5 #21
+
+1)
+def OrdineTopologico(G, vis = [0...0])
+	ordine = []
+	for x in v(G){
+		if vis[x] != 0{
+			ordina(G, vis, x)
+		}
+	}
+	return ordine
+
+def ordina(G, vis, x, ordine)
+	vis[x] = 1
+	for w in v.adiacenti(){
+		if vis[w] == 0{
+			ordina(G, vis, w)
+		}
+	}
+	ordine.insert(x)
+
+
+//O(n+m)
+
+2)
+def OrdineTopologicoALL(G, vis = [0...0], P = [[]...[]])	//P è una lista di liste
+	ordine = []
+	for x in v(G){
+		if vis[x] != 0{
+			trovaPadriPossibili(G, vis, x, P)
+		}
+	}
+	combina(P)
+
+def trovaPadriPossibili(G, vis, x, P)		//P è una lista di liste
+	vis[x] = 1
+	for w in v.uscenti(){
+		if vis[w] == 0{
+			trovaPadriPossibili(G, vis, w, P)
+			
+		}
+	}
+	P[x].append(x.entranti)					//questa funzione ha lo scopo di modificare P
+
+
+def combina(P)
+
+//NO
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+numero di cammini minimi #24
+
+//per prima cosa trovo ""la misura"" del cammino minimo
+def bfs(G: grafo, x : nodo_radice) -> list {
+	dist = [0,...,0]
+	queue = [] //inizializzo una coda
+	queue.enqueue(x)
+	dist[x] = 0
+	while queue is not empty{
+		v = queue.dequeue()
+		for w in v.adiacenti(){
+			if dist[w] == 0 && w != x {
+				queue.enqueue(w)
+				dist[w] = dist[v] + 1
+			}
+		}
+		queue.dequeue(v)
+	}
+	return dist
+}
+
+
+//conto ora i nodi adiacenti a y con distanza da x uguale alla distanza tra x e y -1
+def analizza_dist(G, x, y) -> int
+	dist = bfs(G: grafo, x : nodo_radice)
+	min_dist_x_y = dist[y]
+	count = 0
+	for w in y.adiacenti{
+		if dist[w] == min_dist_x_y - 1{
+			count ++
+		}
+	}
+	return count
+
+//costo finale = O(n+m)
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+componenti fortemente connesse 💪 #16
+
+def componenti_fortemente_connesse(G, comp = [0...0], c = 0,cc = 0, C = "stack", x = random(V(G)), z = x //padre di x)
+	comp[x] = -z
+	c++
+	back = c
+	comp[x] = -c
+	C += [x]
+	for w in v.adiacenti(){
+		if comp[w] == 0{
+			C += [w]
+			b = componenti_fortemente_connesse(G, comp, c++, cc, C, w, v)
+			back = min(b, back)
+		}
+		else if comp[w] < 0{
+			if w != z{
+				back = min(back, -comp[w])
+			}
+		}
+	}
+	if back == -comp[v]{
+		cc++
+		while C.pop() != v{
+			comp[C.pop()] = cc
+		}
+	}
+	return back
+---------------------------------------------------------------------------------------------------------------------------------------------------------------

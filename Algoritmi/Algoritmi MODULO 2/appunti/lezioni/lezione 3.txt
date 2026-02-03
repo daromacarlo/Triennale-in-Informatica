@@ -1,0 +1,219 @@
+lezione 3
+
+Esercizio [gradi]
+Il primo algoritmo ORD che abbiamo visto per l'ordinamento topologico può essere implementato in modo che
+abbia complessità O(n + m). Assumendo che il DAG sia rappresentato tramite liste di adiacenza (cioè, per ogni
+nodo è data la lista degli adiacenti uscenti), descrivere una implementazione così efficiente dell'algoritmo.
+
+
+
+ORD(G: grafo diretto aciclico)
+	L <- lista vuota
+	WHILE c'è almeno un nodo in G DO
+		trova un nodo v senza archi entranti e rimuovilo da G
+		L.append(v)
+	RETURN L
+
+
+		|
+		| (modificato)
+		|
+		V
+
+
+ORD_MOD(G: grafo diretto aciclico, ordine)
+	// trovo l'ultimo nodo
+	for v in V(G){
+		if v.uscenti == []{
+			last =  v
+		}
+	}
+	for x in V(G){
+		x.uscenti.remove(last)
+	}
+	ordine.insert(last)
+
+ORD_MOD(G: grafo diretto aciclico, ordine)
+	vis = [0...0]
+	for v in V(G){
+		if vis[v] == 0 AND v.uscenti == []{
+			ordine.insert(v)
+		}
+	}
+
+//no
+
+ORD_MOD(G, ordine)
+	gradi = count(G)
+	while (exist x | gradi[x] == 0){
+		ordine.insert(x)
+		gradi[x] = -1
+		for (v addiacente x){
+			gradi[v] -= 1
+		}
+	}
+	return ordine
+
+Count(G) -> lista
+	lista = [0...0]
+	for v in V(G){
+		lista[v] = len(v.uscenti)
+	}
+	return lista // tutto ciò ha costo computazionale O(m + n)
+
+
+// Lezione 4
+
+Esercizi
+Questa lezione è interamente dedicata alla risoluzione di esercizi per acquisire una maggiore dimestichezza con le
+idee, concetti e algoritmi che abbiamo visto finora.
+
+Esercizio [archi]
+	Vogliamo scrivere un algoritmo che esegue una DFS su un grafo diretto e ritorna il numero di archi dell'albero della
+	DFS, il numero di archi all'indietro, il numero di archi in avanti e il numero di archi di attraversamento
+
+def trova_albero_e_numera(G, CC, vis = [0...0], x = random(G), counter= 0, Lista = [] //conterrà gli archi dell'albero di visita)  //(AUX)
+	x.CC[t] = counter
+	vis[x] = 1
+	for w in x.adiacenti{
+		if vis[x] == 0{
+			lista += [(x,w)]
+			trova_albero(G, CC, vis, w, counter, Lista)
+		}
+	} 
+	x.CC[T] = counter
+
+def numeroarchi(G, CC, vis = [0...0], x = random(G), counter= 0, Lista = [] //conterrà gli archi dell'albero di visita)
+	Lista = []
+	CC = [...]
+	trova_albero_e_numera(G, CC, vis = [0...0], x = random(G), counter= 0, Lista = [] //conterrà gli archi dell'albero di visita) //O(n+m)
+
+	// inizializzazione dei contatori
+	indietro = 0
+	avanti = 0
+	attraversamento = 0
+
+	for arco (x,y) in E(G) and NOT in Lista
+		if (x.CC[t] > y.CC[T] or x.CC[T] < y.CC[t]){
+			attraversamento ++
+		}
+
+		else if x.CC[t] < y.CC[t] and x.CC[T] > y.CC[T]{
+			indietro ++
+		}
+		else{
+			avanti ++
+		}
+	return avanti, indietro, attraversamento
+
+Esercizio [trasposto]
+	Il grafo trasposto di un grafo diretto G = (V, E), e un grafo diretto GT = (V, ET) che ha lo stesso insieme dei nodi ma
+	tutti gli archi con direzione opposta, vale a dire ET = { (v, u) | (u, v) in E }. Descrivere un algoritmo che dato un grafo
+	diretto G, rappresentato tramite liste di adiacenza degli adiacenti uscenti, ritorna il grafo trasposto GT
+	rappresentato nello stesso modo. L'algoritmo deve avere complessità O(n + m).
+
+def inverti_liste_adicenza(adiacentiIn, adiacentiOut){
+	temp = adiacentiIn
+	adiacentiIn = adiacenti Out
+	adiacentiOut = temp
+}
+
+/*
+def crea_trasposto(G)
+	stack = []
+	vis = [0...0]
+	stack.push(v = random(V(G)))
+	vis[v] = 1
+	while (stack is not empty){
+		v = stack.top()
+		for w adiacente di v{
+			if vis[w] == 0{
+				stack.push(w)
+			}
+		}
+		stack.pop()
+		inverti_liste_adiacenza(v.entranti, v.uscenti)
+	}
+*/
+//no
+
+
+def aux(G)
+	vis = [0...0]
+	for v in V(G){
+		func(v) 	
+	}
+
+def func(v)
+	vis[v] = 1
+	for w in v.uscente{
+		if vis[w] == 0
+		func(w)
+	}
+	inverti_liste_adiacenza(v.entranti, v.uscenti)
+
+// costo computazionale = O(n+m)
+
+
+Esercizio [grado due]
+Dimostrare che se tutti i nodi di un grafo non diretto G hanno grado almeno due allora c’è almeno un ciclo. Se il
+grado di ogni nodo è esattamente due, si puo affermare che G è un ciclo?
+
+//
+
+Esercizio [pozzo]
+In un grafo diretto, un nodo si dice pozzo universale se ha grado entrante n − 1 e grado uscente 0.
+Dimostrare che un grafo diretto non può avere più di un pozzo universale.
+Descrivere un algoritmo che preso un grafo diretto G, rappresentato tramite matrice di adiacenza, determina
+se G contiene o meno un pozzo universale. L’algoritmo deve avere complessità O(n).
+Dimostrare che il problema non è risolvibile in tempo O(n) se il grafo è rappresentato con liste di adiacenza.
+
+1) non può avere più pozzi universali perché questo implicherebbe che uno dei due pozzi universali abbia un arco uscente.
+2) 
+
+	def presenzaPozzo(G)
+		p = RANDOM(V(G))
+		for u in V(G){
+			if M[p][u] == 1{
+				p = u
+			}
+		}
+		for y in V(G){
+			if M[p][y] == 0 and M[y][p] == 1
+			else{
+				return 0
+			}
+		}
+		return p
+
+Esercizio [trasposto]
+	Il grafo trasposto di un grafo diretto G = (V, E), e un grafo diretto GT = (V, ET) che ha lo stesso insieme dei nodi ma
+	tutti gli archi con direzione opposta, vale a dire ET = { (v, u) | (u, v) in E }. Descrivere un algoritmo che dato un grafo
+	diretto G, rappresentato tramite liste di adiacenza degli adiacenti uscenti, ritorna il grafo trasposto GT
+	rappresentato nello stesso modo. L'algoritmo deve avere complessità O(n + m).
+
+	//mi sono accorto solo adesso che per rappresentare il grafo ho a disposizione solo le liste di adiacenza in uscita e non anche quelle in entrata
+
+
+	//trovo prima tutte le liste di adiacenza, uso un semplice dfs (O(n+m))
+
+	def trova_liste_adiacenza(G)
+		Liste = applico un dfs 
+		trasponi(G)
+
+
+	def trasoponi(G)
+		newListe = []
+		for x in V(G)
+			for y in Liste[x]
+				newliste[y] += [x]
+		return newliste
+
+
+Esercizio per casa [strade critiche]
+La rete viaria di una cittadina non è stata progettata molto bene. Tutte le strade sono a doppio senso di marcia e da
+un qualsiasi incrocio è possibile arrivare ad un qualsiasi altro incrocio. Ma ci sono delle strade critiche che se
+interrotte (ad esempio per lavori) dividono la cittadina in due parti e non si può più andare da una parte all'altra.
+Vogliamo un algoritmo efficiente che analizzando la rete viaria trovi tutte le strade critiche.
+
+// 

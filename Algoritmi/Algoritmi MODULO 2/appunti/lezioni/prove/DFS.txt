@@ -1,0 +1,161 @@
+DFS
+
+-DFS NON OTTIMIZZATO, LAVORA IN TEMPO O(N^2) (dove n = numero nodi)
+
+dfs(V(G), E(G))
+	stack = []  //inizializzo uno "stack"
+	visitati = [] //inizializzo una lista dove registrare i visitati
+	start = random(V(G))
+	stack.push(start)
+	vis += [start]
+	while stack is not empty
+	x = start
+	{
+		if exist v in V(G) | v not in vis and exist (x,v) in E(G)
+			{
+			stack.push(v)
+			vis.append(v)
+			}
+		else
+			{
+			x = stack.pop()
+			}
+	}
+	return vis
+
+
+
+
+-DFS OTTIMIZZATO, LAVORA IN TEMPO O(n+m) 
+
+def optimized-dfs(G,V(G))
+	vis = [0,0,0,…,0]          //initialize a list of N elements set at 0
+	x = random(V(G))           //select a random node
+	vis[x] = 1
+	order = []
+	order += [x]
+	stack = {}
+	stack.push(x)
+	while stack is not empty:
+		current = stack.top()
+		if current.adjacent == []:
+			stack.pop
+  		if (vis[current.adjacent[0]] == 0):
+	   		z = current.adjacent[0]
+	   		vis[z] = 1
+	   		order += [z]
+	  		stack.push(z)
+		else:
+  			current.adjacent.remove(0)
+	return order
+
+
+
+
+-DFS OTTIMIZZATO, LAVORA IN TEMPO O(n+m) ricorsivo
+
+nput:
+G: grafo, x ∈ V (G): vertice iniziale
+Output:
+Vertici visitabili da x
+Function DFS_recursive(G, x, Vis):
+	for y ∈ x.uscenti do
+		if y not in Vis then
+			Vis.add(y);
+			DFS_recursive(G, y, Vis);
+
+Function DFS(G,x)
+	Vis = {x};
+	DFS_recursive(G, x, Vis);
+	return Vis;
+
+
+
+
+-IDENTIFICARE COMPONENTI FORTEMENTE CONNESSE
+
+aux(V(G), E(G))
+	comp = [0...0]
+	val = 0
+	for v in V(G)
+		if comp[v] == 0
+			func(v, val + 1)
+	return comp
+
+func(v, val)
+	for w in v.addiacenti
+		comp[w] = val
+	return
+	
+//sbagliato
+
+-TROVARE I CICLI IN TEMPO LINEARE
+	
+def dfs_cycle(G: grafo, v: nodo, u: nodo, P: vettore dei padri)
+	P[v] = -u
+	for each adjacent w of v{
+		if P[w] == 0{
+			z = dfs_cycle(G, w, v, P)
+			if z != 0{
+				P[v] = - (P[v])
+				return z
+			}
+		else{
+			P[v] = u
+			P[w] = 0
+			return v
+			}
+		}
+	}
+
+	P[v] = u
+	return 0
+
+
+def cycle_returner(G: grafo, v: nodo, u: nodo, P: vettore dei padri)
+	w = dfs_cycle(G, v, -v, P)
+	L = empty list
+	while w > 0{
+		L.append(w)
+		w = P[w]
+		}
+	return L
+
+
+-DFS CON TEMPI
+
+def time_dfs(G)
+	vis = [0...0]
+	CC = "array di liste di due interi"
+	counter = 0
+	stack = []
+	x = random(V(g))
+	stack.push(x)
+	CC[w].t = counter
+	while stack is not empty{
+		v = stack.top()
+		for ogni w adiacente di v{
+			if vis(w) == 0{
+				vis(w) = 1
+				CC[w].t = counter
+				counter++
+				stack.push(w)
+			}
+		}
+		CC[stack.top].T = counter
+		stack.pop()
+		counter++
+	}
+	return CC
+
+def dfs_time_rec(G,CC,counter = 0,x: nodo) //la prima colta x viene randomizzato
+	CC = "array di liste di due interi"
+	CC[x].t = counter
+	for w addiacente di x{
+		if CC[x].t == 0{
+			dfs_time_rec(G, CC, counter++, w: nodo)
+			}
+		}
+	CC[x].T = counter
+
+

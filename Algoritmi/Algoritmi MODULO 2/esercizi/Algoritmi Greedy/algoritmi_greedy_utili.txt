@@ -1,0 +1,79 @@
+ALGORITMI GREEDY SUGLI INTERVALLI
+
+//trovare l'insieme massimale di intervalli disgiunti
+
+def massimale_intervalli_disgiunti(I = [(a1,b1),...,(an,bn)])
+	sort(intervalli per b)					//questa operazione se eseguita con un algoritmo efficiente costa O(n*log(n))
+	sol = []
+	for (i = 0, i <= n, i++){
+		if sol "intersecato" (ai,bi) == NULL{
+			sol.append(ai,bi)
+		} 	
+	}
+	return sol
+
+// costo computazionale = O(log(n)*n)
+
+-----------------------------------------------------------
+
+//trovare insieme minimale di elementi che intersecano ogni intervallo
+
+def creaX(I = [(a1,b1),...,(an,bn)]) 
+	sort(intervalli per b)					//questa operazione se eseguita con un algoritmo efficiente costa O(n*log(n))
+	sol = []
+	for (i = 0, i <= n, i++){
+		if (ai,bi) "intersecato" sol == NULL{
+			sol.append(bi)
+		}
+	}
+	return sol
+
+// costo computazionale = O(n*(log(n)))
+
+-----------------------------------------------------------
+
+algoritmo di Kruskal
+
+def kruskal(G)
+	ordina gli archi di G in ordine crescente
+	sol = []
+	for e in E(G){ //precedentemente ordinato
+		if sol.append(e) "non crea cicli"{
+			sol.append(e)
+		}
+	}
+
+//costo = O(nm)
+
+def kruscal_con_negativi(G)
+	ordina gli archi di G in ordine crescente
+	while e in E(G) < 0{
+		sol.append(e)
+		E(G).remove(e)
+	}
+
+	for e in E(G){ //precedentemente ordinato
+	if non esiste un percorso x -> y dove e = (x,y){
+		sol.append(e)
+	}
+	return sol
+
+//costo = O(n(n+m))
+
+-----------------------------------------------------------
+
+algoritmo di Prim
+(stesso scopo dell'algoritmo di Kruscal)
+
+def prim(G){
+	vis = [0,...,0]
+	sol = []
+	while exists w | vis[w] == 0{
+		(u,v) = arco di peso minimo | vis[u] == 1 and vis[v] == 0
+		sol.append(u,v)
+		vis[v] = 1
+	}
+	return sol
+}
+
+// O(nm)

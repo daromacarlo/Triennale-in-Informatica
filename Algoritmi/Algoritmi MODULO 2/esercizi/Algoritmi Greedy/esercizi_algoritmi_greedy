@@ -1,0 +1,133 @@
+/*
+Esame 18 Giugno 2024 - esercizio 3 #93
+Dare lo pseudocodice di un algoritmo che prende in input un grafo non-diretto e connesso con ogni vertice
+colorato o rosso o blu e restituisce in output un albero di copertura con un numero massimo 
+di archi con termine dello stesso colore (quindi il numero massimo di archi colorati rosso-rosso oppure blu-blu).
+*/
+
+
+//algoritmo greedy
+//MODIFICO L'ALGORITMO DI PRIM
+def albero_colorato(G){
+	vis = [0,...,0]
+	while exists w in V(G) | vis[w] == 0{
+		if exists (v,u) = arco in E(G) | (v.colore == u.colore && vis[u] == 0 && vis[v] == 1){
+			sol.append(v,u)
+		}
+		else{
+			(v,u) = arco in E(G)| (vis[u] == 0 && vis[v] == 1)
+			sol.append(v,u)
+		}
+	}
+}
+return sol
+
+/* 
+costo finale = O(nm) 
+   dato che il ciclo while è ripetuto m volte mentre le operazioni interne al ciclo costano O(2m).
+*/
+
+-----------------------------------------------------------
+//uguale ma con minimo
+
+//algoritmo greedy
+//MODIFICO L'ALGORITMO DI PRIM
+def albero_colorato(G){
+	vis = [0,...,0]
+	while exists w in V(G) | vis[w] == 0{
+		if exists (v,u) = arco in E(G) | (v.colore != u.colore && vis[u] == 0 && vis[v] == 1){
+			sol.append(v,u)
+		}
+		else{
+			(v,u) = arco in E(G)| (vis[u] == 0 && vis[v] == 1)
+			sol.append(v,u)
+		}
+	}
+}
+return sol
+
+/* 
+costo finale = O(nm) 
+   dato che il ciclo while è ripetuto m volte mentre le operazioni interne al ciclo costano O(2m).
+*/
+
+
+-----------------------------------------------------------
+// intervalli disgiunti #36
+def insieme_massimale_intervalli_disgiunti(I = [(a1,b1),...,(an,bn)]){
+	ordina I per bk crescente			//operazione che ha costo O(n*log(n))
+	sol = []
+	for i in I{ 
+		if sol "intersecato" i == Null{
+			sol.append(i)
+		}
+	}
+	return sol
+}
+
+// costo = O(n(log(n)))
+// perché l'ordinamento costa O(n(log(n))) mentre il ciclo for costa O(n)
+
+-----------------------------------------------------------
+17 aprile 2024 - esercizio 6 #51
+
+def MST_dopo_cambiamento(G, T, v: nodo cambiato)
+	vis = [1,...,1]
+	//per prima cosa elimino da T tutti i nodi che potrebbero essere stati influenzati dal cambiamento del nodo v
+	for (x,y) in E(T) | x == v or y == v{
+		E(T).remove((x,y))
+		vis[x] = 0
+		vis[y] = 0
+	}
+	while exists w | vis(w) == 0{
+		(x,y) = arco di peso minimo | vis[x] == 1 && vis[y] == 0
+		vis[y] = 1
+		E(T).append((x,y)) 
+	}
+	return E(T)
+
+
+//costo finale = O(nm) cioè il costo dell'algoritmo di Prim.
+// Il primo for costa O(m)
+// Il while viene eseguito n volte e le operazioni al suo interno costano O(m).
+
+-----------------------------------------------------------
+17 aprile 2024 - esercizio 2 #47
+
+def partizione_minimale(A = {a_i = [s_i, e_i]})
+	//no
+
+-----------------------------------------------------------
+[ESAME] 7 luglio 2023 es1 #75
+def esiste_cammino(G, y, z){
+	vis = [0....0]
+	vis[z] = 1
+	stack.push(z)
+	while stack is not empty{
+		if vis[v.adiacenti[0]] == 0{
+			w = v.adiacenti[0]
+			if w == y{
+				return true
+			}
+			stack.push(w)
+		}
+		elif v.adiacenti == []{
+			stack.pop()
+		}
+		else{
+			v.adiacenti.remove[0]
+		}
+	}
+	return false
+}
+
+def main(G, x, y, z){
+	if esiste_cammino(G, y, z) == true && esiste_cammino(G, x, y) == true{
+		return 'YES'
+	}
+	else{
+		return false
+	}
+}
+
+// costo = O(n+m)

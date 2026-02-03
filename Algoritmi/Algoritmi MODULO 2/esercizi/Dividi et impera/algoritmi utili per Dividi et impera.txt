@@ -1,0 +1,26 @@
+def massimo_sottovettore(V)
+	if len(V) == 0{return 0}
+	if len(V) == 1{return max(0, V[0])}
+	else{
+		m = len(V) / 2
+		lss = massimo_sottovettore(0:m)
+		rss = massimo_sottovettore(m+1:len(V)-1)
+		css = 0
+		sum_f_css_L = 0
+		sum_f_css_R = 0
+		sum = 0
+		for i = 0, i = m, i++{
+			sum += V[i]
+			sum_f_css_R = max(sum, sum_f_css_R )
+			}
+		sum = 0 					#  svuoto sum
+		
+		for i = len(V) - 1, i = m+1, i--{
+			sum += V[i]
+			sum_f_css_R = max(sum, sum_f_css_R )
+			}
+		css = sum_f_css_R + sum_f_css_L
+		return max(css,rss,lss)
+	}
+	
+# costo = O(n(log(n)))
