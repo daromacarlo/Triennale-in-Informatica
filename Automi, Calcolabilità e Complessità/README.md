@@ -9,7 +9,7 @@
 [![PDF](https://img.shields.io/badge/resources-Appunti%20%26%20Esercizi-informational)]()
 
 ---
-📄 [Esercizi Risolti](https://github.com/daromacarlo/Triennale-in-Informatica/blob/main/Automi%2C%20Calcolabilit%C3%A0%20e%20Complessit%C3%A0/esercizi/esercizi%20generali_annotato.pdf)  
+📄 [Esercizi Risolti](https://github.com/daromacarlo/Triennale-in-Informatica/tree/main/Automi%2C%20Calcolabilit%C3%A0%20e%20Complessit%C3%A0/esecizi)  
 > Raccolta di esercizi.
 > 
 ![Alan-Turning-Computers](https://github.com/user-attachments/assets/03658861-4fdf-42ee-9d3c-a2143a0be2a8)
