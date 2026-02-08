@@ -1,0 +1,1 @@
+in /file ci sono i vari .pdf e .xopp serviti per creare il file "esercizi svolti.pdf"
