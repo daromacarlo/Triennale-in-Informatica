@@ -1,6 +1,6 @@
 # Automi, Complessità, Calcolabilità – Appunti ed Esercizi per l’Esame
 
-> Raccolta personale di esercizi svolti
+> Raccolta personale di esercizi svolti.
 > I contenuti sono frutto di studio personale, possono contenere imprecisioni. La pagina è di pubblico dominio: sentiti libero di condividere i materiali.
 
 [![Automi](https://img.shields.io/badge/topic-Automi-blue)]()  
