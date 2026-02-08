@@ -25,7 +25,7 @@
 ---
 
 ### Organizzazione Fisica dei Dati
-📄 [Appunti – Organizzazione Fisica (PDF)](https://github.com/daromacarlo/Triennale-in-Informatica/blob/main/Basi%20di%20dati/Basi%20di%20dati%20MODULO%201/appunti%20teoria%20della%20normalizzazione.pdf)  
+📄 [Appunti – Organizzazione Fisica (PDF)](https://github.com/daromacarlo/Triennale-in-Informatica/blob/main/Basi%20di%20dati/Basi%20di%20dati%20MODULO%201/appunti%20Organizzazione%20fisica.pdf)  
 > Approfondimento su **indici**, **file organizzati**, **hashing**, e tecniche di memorizzazione dei dati su disco.
 
 ---
