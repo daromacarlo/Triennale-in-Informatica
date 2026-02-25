@@ -1,0 +1,51 @@
+1. Errori di "Sintassi" Hardware (Formato Istruzione)
+
+Questi errori impediscono al processore di capire cosa fare.
+
+    Opcode Sconosciuto: Il codice operativo (bit 0-6) non esiste nel set RISC-V o non è implementato nel CH32V203.
+
+    Istruzione non supportata (RV32F/D/M): Il programma tenta di usare istruzioni per numeri decimali (Floating Point) o moltiplicazioni hardware (se l'estensione 'M' non è attiva), che il chip non può eseguire.
+
+    Errore di Lunghezza (RVC): Il programma dichiara un'istruzione a 32 bit ma finisce prima, o viceversa, sballando l'allineamento di tutte le istruzioni successive.
+
+2. Errori di Architettura (Limiti del CH32V203)
+
+Il CH32V203 ha una struttura specifica (RV32EC) che è più restrittiva del RISC-V standard.
+
+    Uso di Registri Inesistenti (x16-x31): Poiché il tuo chip è "E" (Embedded), ha solo i registri da x0 a x15. Qualsiasi riferimento a x16-x31 è un errore.
+
+    Allineamento dei Salti (Misalignment): Un'istruzione di salto (JAL, JALR) o un ramo (BEQ) che punta a un indirizzo dispari. Il processore richiede indirizzi multipli di 2.
+
+    Indirizzo di Istruzione Fuori Limite: Un salto che punta a un indirizzo dove non c'è né Flash né RAM (es. saltare all'indirizzo 0xFFFFFFFF).
+
+3. Errori di Accesso alla Memoria (Sicurezza)
+
+Questi errori proteggono l'integrità del microcontrollore.
+
+    Accesso a Periferiche Critiche: Tentativo di scrivere (SW) nei registri di sistema (RCC per il clock, Flash Controller, Power Control) che potrebbero bloccare la scheda.
+
+    Scrittura fuori dalla RAM: Tentativo di scrivere dati in zone non mappate o nella memoria Flash (che richiede una procedura speciale per essere scritta).
+
+    Stack Overflow: Analisi delle istruzioni che spostano il puntatore dello stack (sp) oltre il limite fisico della RAM.
+
+    Self-Modifying Code: Un'istruzione di scrittura (SW, SB) che tenta di modificare la zona di memoria dove si trova il codice che è attualmente in esecuzione.
+
+4. Errori di Privilegio e Sistema (Controllo)
+
+Questi impediscono al programma "ospite" di prendere il comando totale della QT Py.
+
+    Istruzioni di Sistema Proibite: Uso di ecall (chiamata al sistema operativo, se non presente), ebreak (debug) o mret (ritorno da interrupt).
+
+    Accesso ai Registri CSR: Tentativo di leggere o scrivere i Control and Status Registers (es. csrrw), usati per configurare le funzioni di basso livello del core RISC-V.
+
+    Disabilitazione Interrupt: Tentativo di modificare i bit di stato per spegnere le interruzioni globali, rendendo la scheda non responsiva.
+
+5. Errori di Logica "Fatale"
+
+Problemi che non rompono il chip ma lo rendono inutile.
+
+    Loop Infinito Diretto: Un'istruzione di salto che punta esattamente a se stessa (loop: j loop), causando il congelamento del programma.
+
+    Codice Morto o Inaccessibile: Rilevamento di istruzioni posizionate dopo un salto incondizionato che non verranno mai eseguite (utile per ottimizzazione).
+
+    Estensione del Segno Errata: Uso di valori immediati che, a causa della codifica RISC-V, diventano negativi quando il programmatore probabilmente li intendeva positivi, causando salti o calcoli errati.
