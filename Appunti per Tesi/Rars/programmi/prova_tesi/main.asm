@@ -4,16 +4,20 @@
 	testo_ok: .asciz "tutto a posto\n"
 	
 	# La stringa seguente (programma) è un programma assembly RISC-V convertito in binario (hex)
-	programma: .ascii "6704c10f13040400832204001703c10f0323430493031000930c200063487302330e8e0083220e00139e2300b3ee93036356d001330a5a006f00c000b38a5a006f004000938313006ff05ffd"
+	programma: .ascii "1705c10f130505009705c10f838585011386f5ff13072000130e0000930f0000970ec10f838e0e00338fde03930e0000ef00c003130500003305850093081000730000001705c10f1305d5fd9308400073000000130500003305950093081000730000009308a0007300000063d8ef076356c601938e1e00130e0000336dee02b3edee0263940d006f00400263140d006f00c003831c0500b384940113052500938f1f00130e1e006ff05ffc63040d006f00c001831c05003304940113052500938f1f00130e1e006ff05ffa13052500938f1f00130e1e006ff05ff967800000"
+       #programma: .ascii "1705c10f130505009705c10f82000130e0000930f0000970ec10f838e0e00338fde03930e0000ef00c003130500003305850093081000730000001705c10f1305d5fd9308400073000000130500003305950093081000730000009308a0007300000063d8ef076356c601938e1e00130e0000336dee02b3edee0263940d006f00400263140d006f00c003831c0500b384940113052500938f1f00130e1e006ff05ffc63040d006f00c001831c05003304940113052500938f1f00130e1e006ff05ffa13052500938f1f00130e1e006ff05ff9678001111111111111111119000" # corrotto
 	
 	# Quando realizzerò il vero progetto questa stringa si troverà su un buffer e lo trasferirò su questo buffer tramite interfaccia USB
 	
 	fineProgramma:     # Primo indirizzo dopo programma per far terminare il programma... DEVO TROVARE UN ALTRO METODO PER FARE CIO' (TERMINARE)
 .text:			
 	main:
+		
 		la t0, programma
 		la s0, fineProgramma
 		li s1, 15
+		
+		jal ra, controllo_word_intere	#Primo controllo, verifico che le word in input siano tutte intere (32bit completi)
 		
 ###################################################################################################################################################################################################		
 		
@@ -94,8 +98,8 @@
 			
 			# Sicuramente c'è un modo più pulito per fare quello quì sopra
 			
-			jal ra, controllo_opcode 	# Primo controllo: vedo se tutti gli opcode sono validi. # RARAMENTESONO SONO SBAGLIATI
-			
+			jal ra, controllo_opcode 	# Secondo controllo: vedo se tutti gli opcode sono validi. RARAMENTESONO SONO SBAGLIATI.
+			jal ra, controllo_sintassi	# Terzo controllo: vedo se tutte le operazioni sono corrette a livello sintattico.
 			
 							
 			li t6, 0

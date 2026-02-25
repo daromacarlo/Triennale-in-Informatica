@@ -1,3 +1,4 @@
+.globl main
 .data
 	vettore: .word 11,35,2,17,29,95,100,843901,894271
 	N: 	 .word 9
