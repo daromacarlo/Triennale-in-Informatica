@@ -1,6 +1,8 @@
 .globl controllo_opcode
+
 .data
 		scritta: .asciz "fail_opcode\n"
+		
 .text:			   
 	controllo_opcode:
 			andi s3,t6,127
