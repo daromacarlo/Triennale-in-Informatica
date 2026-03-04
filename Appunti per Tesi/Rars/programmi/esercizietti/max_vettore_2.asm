@@ -4,6 +4,7 @@
 	N: 	 .word 9
 	
 .text
+	main:
 	la s0, vettore
 	lw t0, 0(s0)
 	lw t1, N
