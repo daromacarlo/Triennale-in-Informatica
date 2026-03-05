@@ -9,7 +9,6 @@
 # |imm | rs2 | rs1 | funct3 | imm | opcode | (S-type)
 
 
-.text
 .globl simula_S
 
 
@@ -26,7 +25,7 @@ simula_S:
     andi t3, t3, 7           # t3 = funct3
     
     srli t2, t6, 7
-    andi t2, t2, 31          # s10 = imm[4:0]
+    andi t2, t2, 31          # t2 = imm[4:0] 
 
     srli t4, t6, 30      
     andi t4, t4, 127         # t4 = imm[11:5]
@@ -52,10 +51,10 @@ simula_S:
 
 
     beq t3, zero, SB  # SB (funct3=0)
-    li t5, 1
-    beq t3, t5, SH  # SH (funct3=1)
-    li t5, 2
-    beq t3, t5, SW    # SW(funct3=2)
+    li t1, 1
+    beq t3, t1, SH  # SH (funct3=1)
+    li t1, 2
+    beq t3, t1, SW    # SW(funct3=2)
     jr ra
 
 	SB:

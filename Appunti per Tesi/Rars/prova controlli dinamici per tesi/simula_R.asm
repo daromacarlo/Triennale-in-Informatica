@@ -15,7 +15,6 @@
 # |funct7 | rs2 | rs1 | funct3 | rd | opcode | (R-type)
 
 
-.text
 .globl simula_R
 
 
@@ -31,8 +30,8 @@ simula_R:
     srli t3, t6, 12
     andi t3, t3, 7           # t3 = funct3
     
-    srli t2, t6, 7
-    andi t2, t2, 31          # s10 = rd
+    srli s10, t6, 7
+    andi s10, s10, 31        # s10 = rd
 
     # Ricostruzione func7
     srli t4, t6, 30      
@@ -71,62 +70,72 @@ ADD_SUB:
         bgt t4, zero,SUB 
 	ADD:
 	    add s11,a3,a4
-	    slli s10, s10, 2         
-		 sw s11, 0(s10)
+		slli s10, s10, 2
+		add  t0, s10, a5     
+		sw   s11, 0(t0)      
 		 j vai_avanti_con_pc
 	SUB:
 	    sub s11,a3,a4
-	    slli s10, s10, 2           
-		 sw s11, 0(s10)
+	    slli s10, s10, 2
+		add  t0, s10, a5     
+		sw   s11, 0(t0)     
 		 j vai_avanti_con_pc
 	    
 	SLL:
 	    sll s11, a3, a4           
-	    slli s10, s10, 2           
-	        sw s11, 0(s10)
+		slli s10, s10, 2
+		add  t0, s10, a5     
+		sw   s11, 0(t0)     
 	        j vai_avanti_con_pc
 	
 	SLT:                           
 	    slt s11, a3, a4           
-	    slli s10, s10, 2           
-	        sw s11, 0(s10)
+		slli s10, s10, 2
+		add  t0, s10, a5    
+		sw   s11, 0(t0)      
 	         j vai_avanti_con_pc
 	
 	SLTU:                          
 	    sltu s11, a3, a4            
-	    slli s10, s10, 2           
-	        sw s11, 0(s10)
+		slli s10, s10, 2
+		add  t0, s10, a5     
+		sw   s11, 0(t0)      
 	        j vai_avanti_con_pc
 	
 	XOR:
 	    xor s11, a3, a4             
-	    slli s10, s10, 2           
-	        sw s11, 0(s10)
+		slli s10, s10, 2
+		add  t0, s10, a5    
+		sw   s11, 0(t0)      
 	        j vai_avanti_con_pc
 
 SRL_SRA:
 	bgt t4, zero, SRA           
 	SRL:
 	    srl s11, a3, a4             
-	    slli s10, s10, 2           
-	        sw s11, 0(s10)
+		slli s10, s10, 2
+		add  t0, s10, a5   
+		sw   s11, 0(t0)     
 	        j vai_avanti_con_pc
 	SRA:
 	    sra s11, a3, a4             
-	    slli s10, s10, 2           
-	        sw s11, 0(s10)
+		slli s10, s10, 2
+		add  t0, s10, a5   
+		sw   s11, 0(t0)     
 	        j vai_avanti_con_pc
 	
 	OR:
 	    or s11, a3, a4              
-	    slli s10, s10, 2           
-	            sw s11, 0(s10)
+		slli s10, s10, 2
+		add  t0, s10, a5     
+		sw   s11, 0(t0)
 	            j vai_avanti_con_pc
 	
 	AND:
 	    and s11, a3, a4             
-	    slli s10, s10, 2           
-	        sw s11, 0(s10)
+		slli s10, s10, 2
+		add  t0, s10, a5    
+		sw   s11, 0(t0)
 	        j vai_avanti_con_pc
 	
 vai_avanti_con_pc:

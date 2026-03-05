@@ -10,7 +10,6 @@
 # imm | rs2 | rs1 | funct3 | imm | opcode (B-type)
 
 .globl simula_B
-.extern REGISTRI_VIRTUALI 128 
 
 .text
 simula_B:
@@ -86,6 +85,10 @@ branch_lt:
 branch_ge:
     bge a3, a4, esegui_salto
     jr ra
+    
+vai_avanti_con_pc:
+      addi s2, s2, 8                 # Prossima istruzione HEX (8 caratteri)
+      jr ra
 
 esegui_salto:
     add s2, s2, t4              # nuovo PC (simuato) = PC (simulato) + immediato
