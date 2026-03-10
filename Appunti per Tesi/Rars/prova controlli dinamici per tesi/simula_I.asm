@@ -10,12 +10,15 @@
 # srai Shift Right Arith Imm I 0010011 0x5 imm[5:11]=0x20 rd = rs1 >> imm[0:4] msb-extends
 # slti Set Less Than Imm I 0010011 0x2 rd = (rs1 < imm)?1:0
 # sltiu Set Less Than Imm (U) I 0010011 0x3 rd = (rs1 < imm)?1:0 zero-extends
+#------------------------------------------------------------------------------
 # lb Load Byte I 0000011 0x0 rd = M[rs1+imm][0:7]
 # lh Load Half I 0000011 0x1 rd = M[rs1+imm][0:15]
 # lw Load Word I 0000011 0x2 rd = M[rs1+imm][0:31]
 # lbu Load Byte (U) I 0000011 0x4 rd = M[rs1+imm][0:7] zero-extends
 # lhu Load Half (U) I 0000011 0x5 rd = M[rs1+imm][0:15] zero-extends
+#------------------------------------------------------------------------------
 # jalr Jump And Link Reg I 1100111 0x0 rd = PC+4; PC = rs1 + imm
+#------------------------------------------------------------------------------
 # ecall Environment Call I 1110011 0x0 imm=0x0 Transfer control to OS
 # ebreak Environment Break I 1110011 0x0 imm=0x1 Transfer control to debugger
 #-----------------------------------------------------------------------------#
@@ -87,70 +90,159 @@ simula_I:
 		
 			    
 		SLLI:
-	        sll s11, a3, a4           
+		bgt t4, zero, SLLI_REAL
+		jr ra
+		SLLI_REAL: 
+		andi t2,t2, 31
+	        sll s11, a3, t2         
 		slli s10, s10, 2
 		add  t0, s10, a5     
 		sw   s11, 0(t0)     
 	        j vai_avanti_con_pc
 	
 		SLTI:                           
-		slt s11, a3, a4           
+		slt s11, a3, t2           
 		slli s10, s10, 2
 		add  t0, s10, a5    
 		sw   s11, 0(t0)      
 	        j vai_avanti_con_pc
 	
 	        SLTIU:                          
-	        sltu s11, a3, a4            
+	        sltu s11, a3, t2            
 		slli s10, s10, 2
 		add  t0, s10, a5     
 		sw   s11, 0(t0)      
 	        j vai_avanti_con_pc
 	
 	        XORI:
-	        xor s11, a3, a4             
+	        xor s11, a3, t2             
 		slli s10, s10, 2
 		add  t0, s10, a5    
 		sw   s11, 0(t0)      
 	        j vai_avanti_con_pc
 
        SRLI_SRAI:
+       		andi t2,t2, 31
 	        bgt t4, zero, SRAI          
 	        SRLI:
-	        srl s11, a3, a4             
+	        srl s11, a3, t2             
 	        slli s10, s10, 2
 		add  t0, s10, a5   
 		sw   s11, 0(t0)     
 	        j vai_avanti_con_pc
 	        
 	        SRAI:
-	        sra s11, a3, a4             
+	        sra s11, a3, t2             
 		slli s10, s10, 2
 		add  t0, s10, a5   
 		sw   s11, 0(t0)     
 	        j vai_avanti_con_pc
 	
 	        ORI:
-	        or s11, a3, a4              
+	        or s11, a3, t2              
 		slli s10, s10, 2
 		add  t0, s10, a5     
 		sw   s11, 0(t0)
 	        j vai_avanti_con_pc
 	
 	        ANDI:
-	        and s11, a3, a4             
+	        and s11, a3, t2            
 		slli s10, s10, 2
 		add  t0, s10, a5    
 		sw   s11, 0(t0)
 	        j vai_avanti_con_pc
         
 	vai_simula_LOAD:
+		
+		    beq t3, zero, LB  # LB (funct3=0)
+		    li t1, 1
+		    beq t3, t1, LH  # LH (funct3=1)
+		    li t1, 2
+		    beq t3, t1, LW    # LW(funct3=2)
+		    li t1, 3
+		    beq t3, t1, LBU    # LW(funct3=3)
+		    li t1, 4
+		    beq t3, t1, LHU    # LW(funct3=4)
+		    jr ra
+		    
+		    LB:
+		        add  t0, a3, t2      
+		        lb   s11, 0(t0)      
+		        slli s10, s10, 2     
+		        add  t0, s10, a5   
+		        sw   s11, 0(t0)     
+		        j    vai_avanti_con_pc
+		
+		    LH:
+		        add  t0, a3, t2      
+		        lh   s11, 0(t0)      
+		        slli s10, s10, 2     
+		        add  t0, s10, a5   
+		        sw   s11, 0(t0)     
+		        j    vai_avanti_con_pc
+		
+		
+		    LW:
+		        add  t0, a3, t2     
+		        lw   s11, 0(t0)  
+		        slli s10, s10, 2     
+		        add  t0, s10, a5   
+		        sw   s11, 0(t0)     
+		        j    vai_avanti_con_pc
+		
+		
+		    LBU:
+		        add  t0, a3, t2     
+		        lbu  s11, 0(t0)      
+		        slli s10, s10, 2     
+		        add  t0, s10, a5   
+		        sw   s11, 0(t0)     
+		        j    vai_avanti_con_pc
+		
+		
+		    LHU:
+		        add  t0, a3, t2    
+		        lhu  s11, 0(t0)     
+		        slli s10, s10, 2     
+		        add  t0, s10, a5   
+		        sw   s11, 0(t0)     
+		        j    vai_avanti_con_pc
+		
 	
 	vai_simula_JALR:
+	    addi s11, s2, 8
+	    slli t0, s10, 2          
+	    add  t0, t0, a5          
+	    sw   s11, 0(t0)          
+	    add  s2, a3, t2          
+	    andi s2, s2, -2          
+   	    jr ra		
 	
-	vai_simula_SYST:  
+	vai_simula_SYST:
+	    li   t5, 1
+	    beq  t2, t5, EBREAK
+	    lw   a0, 40(a5)        
+	    li   t5, 1               
+	    beq  a0, t5, SERVICE_PRINT_INT
+	    li   t5, 10             
+	    beq  a0, t5, SERVICE_EXIT
+	    j    vai_avanti_con_pc    
+	
+	SERVICE_PRINT_INT:
+	    lw   a0, 44(a5)
+	    li   a7, 1
+	    ecall                  
+	    j    vai_avanti_con_pc
+	
+	SERVICE_EXIT:
+	    li   a7, 10
+	    ecall 
+	
+	EBREAK:
+	    j    vai_avanti_con_pc
+	 
 	
 vai_avanti_con_pc:
-      addi s2, s2, 8                 # Prossima istruzione HEX (8 caratteri)
+      addi s2, s2, 8 
       jr ra
   	

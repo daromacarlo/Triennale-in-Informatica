@@ -1,0 +1,6 @@
+Address     Code        Basic                        Line Source
+
+4194304  0x008000ef  jal x1,8                     8    	jal ra, caccola
+4194308  0x00c000ef  jal x1,12                    9    	jal ra quit
+4194312  0x00130313  addi x6,x6,1                 12   	addi t1,t1,1
+4194316  0x00008067  jalr x0,x1,0                 13   	jr ra

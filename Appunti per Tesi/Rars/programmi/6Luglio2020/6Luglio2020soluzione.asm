@@ -24,23 +24,7 @@ separatore: .asciz "\n"
  	li t4, 0
  	jal ra, SommaScacchiera		#salto alla funzione e salvo l'indirizzo della riga dopo di questa (21) in t1, tornerò quì per stampare alla fine
  	
- 	li a0, 0
- 	add a0, a0, s0
- 	li a7, 1
- 	 	ecall
- 	 
- 	la a0, separatore
- 	li a7, 4
- 	 	ecall
- 	 	
- 	li a0, 0
- 	add a0, a0, s1
- 	li a7, 1
- 	 	ecall
- 	 	
- 	li a7, 10
- 		ecall
- 	
+
  SommaScacchiera:
  	while:  
  		bge t6, t5, fineWhile

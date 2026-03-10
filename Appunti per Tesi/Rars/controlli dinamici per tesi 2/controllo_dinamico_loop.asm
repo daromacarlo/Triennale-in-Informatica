@@ -1,9 +1,10 @@
 .globl controllo_dinamico_loop
-
 .data
+MEMORIA_VIRTUALE: .space 4096 
     #programma: .ascii "1705c10f130505009705c10f838585011386f5ff13072000130e0000930f0000970ec10f838e0e00338fde03930e0000ef00c003130500003305850093081000730000001705c10f1305d5fd9308400073000000130500003305950093081000730000009308a0007300000063d8ef076356c601938e1e00130e0000336dee02b3edee0263940d006f00400263140d006f00c003831c0500b384940113052500938f1f00130e1e006ff05ffc63040d006f00c001831c05003304940113052500938f1f00130e1e006ff05ffa13052500938f1f00130e1e006ff05ff967800000"
-    #programma: .ascii "13091900b3042901"
-    programma: .ascii "6f0040006ff0dfff"
+    #programma: .ascii "1305a000ef008001970200009382c201e78002009308a000730000003305a500678000001305f5ff67800000ef008000ef00c0001303130067800000"
+    programma: .acsii "1704c10f13040400832204001703c10f032383019303100063d06302139e2300330e8e00832e0e0063d4d201b302d001938313006ff05ffe"
+    #programma: .ascii "1704c10f13040400832204001703c10f0323430493031000930c200063487302330e8e0083220e00139e2300b3ee93036356d001330a5a006f00c000b38a5a006f004000938313006ff05ffd1703c10f130383009703c10f83830301130e0000b38e7302330e7e0063ccce01830f03003304f40133037300130313006ff09ffe1703c10f130343fd9703c10f8383c3fd130e0000b38e7302330e7e0063ccce01330373001303f3ff830f03003304f4016ff09ffe1704c10f130444fb832204001703c10f032303fc9303100063d06302139e2300330e8e00832e0e0063d4d201b302d001938313006ff05ffe1704c10f130484f9832204001703c10f032303fb9303100063d06302139e2300330e8e00832e0e0063d4d201b302d001938313006ff05ffe"
     fineprogramma:
     testo_ok: .asciz "tutto a posto"
     testo_errore: .asciz "successo casotto"
@@ -11,8 +12,8 @@
     
     CONTAPASSI:    .word 0
     MAXPASSI:      .word 4096
-    REGISTRI_VIRTUALI: .space 128  # 32 registri da 4 byte, inizializzati a 0
-    MEMORIA_VIRTUALE: .space 4096  # 4KB di memoria simulata possono bastare per provare progetti didattici. # volendo posso andare anche oltre, mim interessa l'indirizzo base...
+    REGISTRI_VIRTUALI: .space 128 
+    
 
 .text
 controllo_dinamico_loop:
@@ -33,10 +34,10 @@ controllo_dinamico_loop:
     la s2, programma           
     la s3, fineprogramma
     li s4, 0                  
-    
-  la t0, MAXPASSI
-    lw s5, 0(t0)            
-    li s1, 0                 
+  
+    la t0, MAXPASSI
+    lw s5, 0(t0)     
+                          
     sb zero, 0(a5)            
     sb zero, 1(a5)           
     sb zero, 2(a5)            
@@ -44,6 +45,7 @@ controllo_dinamico_loop:
 
 ciclo_simulazione:
    while:
+      sw zero, 0(a5)
       li s1, 15
       addi s4, s4, 1
       bge s2, s3, ok			            	
@@ -125,43 +127,34 @@ ciclo_simulazione:
       beq s10, s11, vai_simula_I
       li s11,111
       beq s10, s11, vai_simula_J  
-      j vai_simula_U        
+      li s11, 55  
+      beq s10, s11, vai_simula_U 
+      li s11, 23
+      beq s10, s11, vai_simula_U 
+      j esci   # in teoria è impossibile che si arrivi a questa parte del codice vista la strutura del mio codice 
 
 vai_simula_B:
 	jal ra, simula_B
 	j while
 vai_simula_R:
-	#jal ra, simula_R
-	#j while
+	jal ra, simula_R
+	j while
 vai_simula_S:
-	#jal ra, simula_S
-	#j while
+	jal ra, simula_S
+	j while
 vai_simula_I:
 	jal ra, simula_I
 	j while
 vai_simula_J:
-	#jal ra, simula_J
-	#j while
+	jal ra, simula_J
+	j while
 vai_simula_U:
-	#jal ra, simula_U
-	#j while
-non_ancora_sviluppata:
-    li a0, 1                 # Successo
-    lw ra, 44(sp)
-    lw s0, 40(sp)
-    lw s1, 36(sp)
-    lw s2, 32(sp)
-    lw s3, 28(sp)
-    lw s4, 24(sp)
-    lw s9, 20(sp)
-    lw s10, 16(sp)
-    lw s11, 12(sp)
-    addi sp, sp, 48
-    #ret
+	jal ra, simula_U
+	j while
 
 
 errore_loop_infinito:
-    li a0, 1                 # Successo
+    li a0, 1                 # inSuccesso
     lw ra, 44(sp)
     lw s0, 40(sp)
     lw s1, 36(sp)
@@ -172,7 +165,11 @@ errore_loop_infinito:
     lw s10, 16(sp)
     lw s11, 12(sp)
     addi sp, sp, 48
-    #ret
+     	 	la a0, testo_errore
+ 		li a7, 4
+ 	 	ecall
+ 	 	li a7, 10
+ 		ecall
 
 ok:
     li a0, 0                 # Successo
@@ -186,4 +183,26 @@ ok:
     lw s10, 16(sp)
     lw s11, 12(sp)
     addi sp, sp, 48
-    #ret
+     	 	la a0, testo_ok
+ 		li a7, 4
+ 	 	ecall
+ 	 	li a7, 10
+ 		ecall
+
+esci:
+    li a0, 0                 # inSuccesso
+    lw ra, 44(sp)
+    lw s0, 40(sp)
+    lw s1, 36(sp)
+    lw s2, 32(sp)
+    lw s3, 28(sp)
+    lw s4, 24(sp)
+    lw s9, 20(sp)
+    lw s10, 16(sp)
+    lw s11, 12(sp)
+    addi sp, sp, 48
+     	 la a0, testo_prov
+	 li a7, 4
+	  ecall
+	  li a7, 10
+	 ecall

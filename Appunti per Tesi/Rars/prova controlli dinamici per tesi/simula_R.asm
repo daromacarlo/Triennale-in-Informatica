@@ -3,7 +3,7 @@
 #-----------------------------------------------------------------------------#
 # add ADD R 0110011 0x0 0x00 rd = rs1 + rs2                                   #
 # sub SUB R 0110011 0x0 0x20 rd = rs1 - rs2                                   #
-# xor XOR R 0110011 0x4 0x00 rd = rs1 ˆ rs2                                   #
+# xor XOR R 0110011 0x4 0x00 rd = rs1 ï¿½ rs2                                  #
 # or OR R 0110011 0x6 0x00 rd = rs1 | rs2                                     #
 # and AND R 0110011 0x7 0x00 rd = rs1 & rs2                                   #
 # sll Shift Left Logical R 0110011 0x1 0x00 rd = rs1 << rs2                   #
