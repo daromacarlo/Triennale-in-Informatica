@@ -70,42 +70,42 @@ simula_R:
 	ADD:
 	add s7,a3,a4
 	slli t4, t4, 2
-	add  s5, t4, a5     
-	sw   s7, 0(s5)      
+	add  t1, t4, a5     
+	sw   s7, 0(t1)      
 	j vai_avanti_con_pc
 	SUB:
         sub s7,a3,a4
 	slli t4, t4, 2
-	add  s5, t4, a5     
-	sw   s7, 0(s5)        
+	add  t1, t4, a5     
+	sw   s7, 0(t1)        
 	j vai_avanti_con_pc
 	    
 	SLL:
 	sll s7, a3, a4           
 	slli t4, t4, 2
-	add  s5, t4, a5     
-	sw   s7, 0(s5)    
+	add  t1, t4, a5     
+	sw   s7, 0(t1)    
 	j vai_avanti_con_pc
 	
 	SLT:                           
 	slt s7, a3, a4           
 	slli t4, t4, 2
-	add  s5, t4, a5     
-	sw   s7, 0(s5)       
+	add  t1, t4, a5     
+	sw   s7, 0(t1)       
 	j vai_avanti_con_pc
 	
 	SLTU:                          
 	sltu s7, a3, a4            
 	slli t4, t4, 2
-	add  s5, t4, a5     
-	sw   s7, 0(s5)            
+	add  t1, t4, a5     
+	sw   s7, 0(t1)            
 	j vai_avanti_con_pc
 	
 	XOR:
 	xor s7, a3, a4             
 	slli t4, t4, 2
-	add  s5, t4, a5     
-	sw   s7, 0(s5)        
+	add  t1, t4, t1     
+	sw   s7, 0(t1)        
 	j vai_avanti_con_pc
 
     SRL_SRA:
@@ -113,28 +113,28 @@ simula_R:
 	SRL:
 	srl s7, a3, a4             
 	slli t4, t4, 2
-	add  s5, t4, a5     
-	sw   s7, 0(s5)        
+	add  t1, t4, a5     
+	sw   s7, 0(t1)        
 	j vai_avanti_con_pc
 	SRA:
 	sra s7, a3, a4             
 	slli t4, t4, 2
-	add  s5, t4, a5     
-	sw   s7, 0(s5)        
+	add  t1, t4, a5     
+	sw   s7, 0(t1)        
 	j vai_avanti_con_pc
 	
 	OR:
 	or s7, a3, a4              
 	slli t4, t4, 2
-	add  s5, t4, a5     
-	sw   s7, 0(t0)    
+	add  t1, t4, a5     
+	sw   s7, 0(t1)    
 	j vai_avanti_con_pc
 	
 	AND:
 	and s7, a3, a4             
 	slli t4, t4, 2
-	add  s5, t4, a5     
-	sw   s7, 0(t0)     
+	add  t1, t4, a5     
+	sw   s7, 0(t1)     
 	j vai_avanti_con_pc
 	
 vai_avanti_con_pc:

@@ -26,7 +26,6 @@
 # imm | rs1 | funct3 | rd | opcode (I-type)
 
 .globl simula_I
-
 .text
 simula_I:
     srli t1, t6, 15
@@ -218,15 +217,23 @@ simula_I:
 	    sw a7, 0(a6)
 	         
 	    add s2, a3, t5     # PC = rs1 + imm
-	    add s2, s2, s8     # aggiungo indirizzo base programma.
+	    
 	    
    	    jr ra		
 
 #------------------------------------------------------------------------	
 
 	vai_simula_SYST:
-	    j    vai_avanti_con_pc    
- 
+	
+	    li s9, 0x1 
+	    beq t5,zero, BREAK 
+            li s9, 0x0
+	    beq t5, s9, CALL   
+	   
+	    BREAK:
+		j ok # Programma finisce, non ha loop
+	    CALL:
+ 		j vai_avanti_con_pc
 	
 vai_avanti_con_pc:
       addi s2, s2, 8 

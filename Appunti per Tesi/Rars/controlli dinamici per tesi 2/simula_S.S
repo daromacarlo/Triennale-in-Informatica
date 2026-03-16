@@ -14,7 +14,7 @@
 
 .text
 simula_S:
-    # Estrazione campi rs1, rs2, funct3 con una maschera
+    # Estrazione campi 
     srli t1, t6, 15
     andi t1, t1, 31          # t1 = rs1
     
@@ -62,7 +62,6 @@ simula_S:
 	SH:
             sh a4, 0(t5)
             j vai_avanti_con_pc
-	    
 	SW:
             sw a4, 0(t5)
             j vai_avanti_con_pc
