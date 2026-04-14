@@ -1,0 +1,1 @@
+brutta cosa vibecodare ma la gaussiana mi ha costretto
