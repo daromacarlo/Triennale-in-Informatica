@@ -1,5 +1,6 @@
 # Triennale in Informatica – Sapienza Università di Roma
-<img width="200" height="200" alt="sapienza-university-of-rome-vector-logo" src="https://github.com/user-attachments/assets/8f165c7e-4303-44dc-a36e-b39533f45675" />
+<img width="3840" height="1153" alt="Uniroma1 svg" src="https://github.com/user-attachments/assets/ea6f46bb-e13b-4b90-a89a-f1b6d9e9ca13" />
+
 
 Raccolta di materiale didattico, appunti, esercizi e progetti relativi al corso di Laurea Triennale in Informatica presso Sapienza Università di Roma.
 
