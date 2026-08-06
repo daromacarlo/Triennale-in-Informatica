@@ -1,0 +1,1659 @@
+\documentclass[italian, Lau, oneside, openany]{sapthesis}
+%Bachelor's (laurea triennale) thesis : Lau 
+%Master's (laurea specialistica) thesis: LaM 
+%PhD's thesis: PhD 
+\geometry{
+    top=2.0cm,      % Margine superiore (Default sapthesis è molto ampio)
+    bottom=2.0cm,   % Margine inferiore
+    left=2.0cm,     % Margine sinistro (Consigliato 2.5cm o 3cm per la rilegatura)
+    right=2.0cm     % Margine destro
+}
+
+\usepackage[italian]{babel} %use this package for a thesis written in Italian
+\usepackage[utf8]{inputenx}
+\usepackage{indentfirst}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{hyperref} 
+\usepackage{fontawesome5} %per simbolo github
+\usepackage{tikz}
+\usepackage{float}      % per l’opzione H
+\usetikzlibrary{shadows.blur} % per il blur
+%\usepackage{chemformula}
+%\usepackage{setspace}
+%\usepackage{yfonts,color}
+%\usepackage{siunitx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{pdflscape}
+
+\lstset{
+  language=C,
+  keywordstyle=\color{green},
+  basicstyle=\ttfamily,
+}
+\usepackage{comment}
+%\usepackage{multirow}
+%\usepackage{varioref}
+%\usepackage[bottom]{footmisc}
+%\usepackage{wrapfig}
+%\usepackage{float}
+%\usepackage{type1cm}
+\usepackage{lettrine}
+\linespread{0.9}
+%\usepackage{chngcntr}
+\usepackage[nottoc, notlof, notlot]{tocbibind}
+%\onehalfspacing
+\counterwithout{footnote}{chapter}
+\usepackage{hyperref}
+\hypersetup{
+			hyperfootnotes=true,			
+			bookmarks=true,			
+			colorlinks=true,
+			linkcolor=red,
+            linktoc=page,
+			anchorcolor=black,
+			citecolor=red,
+			urlcolor=blue,
+			pdftitle={Resoconto Tirocinio Carlo Da Roma},
+			pdfauthor={Carlo Da Roma},
+			pdfkeywords={thesis, sapienza, roma, university}
+ }
+
+\title{Progettazione e sviluppo di software per validazione esercizi e verifica di codice didattico eseguito su microcontrollore con architettura RISC-V}
+\author{Carlo Da Roma}
+\IDnumber{2086036}
+\course[]{Informatica}
+\courseorganizer{Facolt\`a di Ingegneria informatica, Informatica e Statistica}
+\submitdate{2025/2026}
+\copyyear{2026}
+\advisor{Prof. Alessandro Checco}
+%\coadvisor{nome cognome} %sblocca se c'è
+\authoremail{daromacarlo@gmail.com}
+\examdate{22 Settembre 20190}
+
+
+%we refer to http://ctan.mirrorcatalogs.com/macros/latex/contrib/sapthesis/sapthesis-doc.pdf for an exhaustive description of the sapthesis documentclass.
+
+
+\begin{document}
+
+\frontmatter
+\maketitle
+
+\begin{abstract}
+L'oggetto di questo tirocinio è stata la progettazione e lo sviluppo di un programma per il microcontrollore ESP32-C3 SuperMini (architettura RISC-V), volto ad agevolare l'apprendimento dell'architettura stessa.
+Il sistema permette la scrittura, compilazione ed esecuzione di codice Assembly direttamente sul microcontrollore. Il software offre varie modalità di utilizzo ed è utile per validare vari tipi di esercizi concepiti per supportare chi desideri approcciare lo studio dell'architettura RISC-V. 
+\end{abstract}
+
+\tableofcontents
+
+\mainmatter
+\chapter{Introduzione}
+\label{chap:1} 
+\section{Breve introduzione a RISC-V}
+\noindent
+RISC-V è l'ultima evoluzione delle architetture \textbf{R.I.S.C.} \textit{(Reduced Instruction Set Computer)}
+è nata nel 2010 in California presso l'università di Berkeley e a differenza delle altre architetture presenti ad oggi sul mercato è uno standard open source, questa caratteristica ha modificato profondamente il mercato dei semiconduttori perché i chip RISC-V non sono proprietà di un singolo produttore ma un bene pubblico gestito dalla RISC-V International, più produttori possono produrre e assemblare su diverse schede lo stesso chip se approvati da questo ente. \\
+\newline
+In ambito accademico, molti corsi universitari che prevedevano l'apprendimento del MIPS32 come linguaggio assembly stanno migrando a RISC-V perché eredita l'eleganza di MIPS ma elimina costi di licenza e alcuni limiti di MIPS; offre una piattaforma più moderna, più etica ed ha alle spalle una community già molto ampia e consolidata ed un largo impiego in ambito industriale.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{armrisc.png}
+    \caption{Logo RISC-V}
+    \label{fig:RISC-V}
+\end{figure}
+\label{chap:2} 
+\section{Perché studiare assembly RISC-V}
+\noindent Lo studio delle architetture e dell'assembly è una componente fondamentale dell'informatica, grazie a questo si apprende a pieno e in maniera approfondita il funzionamento di un calcolatore moderno. Solo studiando linguaggi e concetti così a basso livello si comprende come il software interagisce con l'hardware e la memoria, si apprendono competenze avanzate utili negli ambiti della sicurezza, del reverse engineering e della progettazione del software e si sviluppa un approccio più rigoroso e consapevole alla programmazione.
+\label{chap:3} 
+\section{Importanza dell’esperienza pratica con microcontrollori}
+\noindent
+L'apprendimento delle architetture degli elaboratori non può limitarsi al solo studio teorico ma bisogna anche scrivere codice a basso livello per capire a pieno i concetti.
+\newline
+Lavorare con microcontrollori reali consente di osservare concretamente il funzionamento dell’hardware e di interagire con segnali digitali e analogici, tutto ciò permette di consolidare le conoscenze e rende più significativo lo studio della materia
+\label{chap:6} 
+\section{Scelta del microcontrollore}
+\noindent
+Per lo sviluppo del progetto è stato scelto il microcontrollore ESP32 in versione ``C3 SuperMini’’ prodotta da Espressif Systems e distribuita da vari fornitori. La scelta di questo dispositivo è motivata da una serie di fattori che lo rendono adatto all'idea del progetto e ad essere usato in laboratori universitari. La scelta è avvenuta a seguito di una fase preliminare di valutazione e confronto tra diverse soluzioni disponibili sul mercato.
+\begin{itemize}
+\item Monta un chip con architettura RISC-V, fondamentale per eseguire 
+programmi assembly RISC-V nativamente.
+\item 
+È di dimensioni molto ridotte.
+\item
+Ha una documentazione molto completa e facile da consultare.
+\item
+È compatibile con Arduino IDE e con altri sistemi largamente diffusi, quindi è facile interfacciarsi con essa.
+\item
+È molto economica, ha un costo di circa 5€ ad oggi, Se comprata all'ingrosso costa anche meno.
+\item 
+Offre un’interfaccia di I/O completa, comprendente diverse GPIO, comunicazioni seriali e una porta USB integrata per alimentazione e programmazione; inoltre è dotata di un LED integrato sul GPIO 8, tutte queste caratteristiche sono utili allo scopo del mio progetto.
+\item
+È ampiamente utilizzata e supportata da una community particolarmente attiva e consolidata. Questo aspetto rappresenta un vantaggio significativo se si vuole sviluppare software, in quanto garantisce la disponibilità di numerosi esempi, librerie e progetti già sviluppati, facilitando sia la fase di apprendimento sia quella di sviluppo e soprattutto risoluzione dei problemi.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.4\textwidth]{ESP32-C3-SuperMini.jpg}
+    \caption{ESP32-C3-SuperMini}
+    \label{fig:esp32}
+\end{figure}
+
+\label{chap:7} 
+\section{Come interfacciarsi col microcontrollore}
+\noindent
+Per sviluppare il codice e flasharlo sulla scheda ho utilizzato Arduino Ide che consiglio in quanto al suo interno sono contenuti tool preinstallati utilissimi per comunicare e gestire queste schede.\\ {\color{blue!39} Segue una guida passo passo per interfacciarsi al microcontrollore mediante Arduino Ide.}
+\subparagraph{0) Identificazione parti microcontrollore}
+\leavevmode\\
+Partiamo con l'identificazione di alcune parti della scheda per rendere più agevole la guida.
+\begin{figure}[H]
+    \centering
+        {\includegraphics[width=0.8\textwidth]{tut3.png}}
+        \caption{ESP32-C3-SuperMini identificazione componenti fondamentali (vista superiore)}
+    \label{fig:ESP2}
+\end{figure}
+\newline
+\begin{figure}[H]
+    \centering
+        {\includegraphics[width=0.6\textwidth]{X.png}}
+        \caption{ESP32-C3-SuperMini identificazione GPIO (vista superiore)}
+    \label{fig:ESP1}
+\end{figure}
+\newline
+\begin{figure}[H]
+    \centering
+        {\includegraphics[width=0.6\textwidth]{X - Copia.png}}
+        \caption{ESP32-C3-SuperMini identificazione GPIO (vista inferiore)}
+    \label{fig:tut1}
+\end{figure}
+\newline
+\subparagraph{Appunto di notazione}
+\leavevmode\\
+\textit{D'ora in avanti quando si affermarà che un LED è collegato al pin X, si intende che uno dei terminali dI un LED è connesso al GPIO X della scheda, mentre l’altro terminale è collegato al PIN di alimentazione a 3,3 V (3V3). In questa configurazione, il GPIO consente di accendere o spegnere il LED tramite segnali logici, mentre il PIN a 3,3 V fornisce la tensione necessaria per il corretto funzionamento del componente.}
+\subparagraph{1) Installare Arduino IDE}
+\leavevmode\\
+Scaricare il software dal seguente \\link: \href{blue}{https://www.arduino.cc/en/software/#experimental-software}\\
+scegliere la versione più adatta al sistema operativo che avete e completare l'installazione.
+\subparagraph{2) Installare i driver della ESP32 in Arduino Ide}
+\leavevmode\\
+cliccare l'icona Board Manager (o Gestore Schede in italiano) sul lato sinistro.
+\newline
+In alternativa cliccare Tools > Board > BoardManager (Strumenti > Schede > Gestore Schede).
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.8\textwidth]{Screenshot 2026-04-01 at 13-25-23 Getting Started with the ESP32-C3 Super Mini Random Nerd Tutorials.png}};
+    \end{tikzpicture}
+    \label{fig:tut2}
+\end{figure}
+\newline \noindent
+Cercare sulla barra di ricerca "ESP32" ed installare il pacchetto mostrato nella prossima immagine.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.8\textwidth]{Screenshot 2026-04-01 at 13-30-00 Getting Started with the ESP32-C3 Super Mini Random Nerd Tutorials.png}};
+    \end{tikzpicture}
+    \label{fig:tut3}
+\end{figure}
+\newline \noindent
+Il pacchetto verrà installato in pochi secondi...
+\subparagraph{3) Collegamento del microcontrollore}
+\leavevmode\\
+Come già detto la ESP32C3 è dotata di una interfaccia USB-C, nel mio caso specifico per flashare il codice era necessario semplicemente connettere la scheda al computer ma dato che esistono varie versioni di questa scheda potrebbe essere necessario porla in \textbf{Bootloader mode}, per impostarla in questa modalità è necessario:
+\newline
+\\
+1. Connettere la scheda al computer tramite interfaccia USB-C.
+\newline
+2. Premere il tasto \textbf{BOOT}.
+\newline
+3. Mentre si tiene premuto il tasto \textbf{BOOT} premere il tasto \textbf{RESET} e poi rilasciarlo.
+\newline
+4. Rilasciare il tasto  \textbf{BOOT}.
+\subparagraph{4) Caricare codice}
+\leavevmode\\
+Per verificare che tutto sia andato per il meglio eseguiamo codice di prova.
+\newline
+\\
+bisogna ora selezionare la scheda e la porta COM per comunicare con l'ESP32.
+\newline
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.8\textwidth]{Screenshot 2026-04-01 at 15-43-50 Getting Started with the ESP32-C3 Super Mini Random Nerd Tutorials.png}};
+    \end{tikzpicture}
+    \label{fig:tut4}
+\end{figure}
+\newline \noindent
+Cliccare sul menu a tendina in alto e
+selezionare ESP32C3 Dev Module. Poi, selezionare la porta COM corrispondente (COM3 di solito).
+\newline
+Abilitare poi l’opzione Tools > USB CDC on Boot.
+
+Copiare poi il seguente codice su Arduino IDE. Questo codice fa semplicemente lampeggiare il LED integrato (collegato al PIN 8) e stampa nel Serial Monitor lo stato attuale del PIN.
+\newline
+\begin{verbatim}
+
+/***************************************************************
+Codice di prova per far accendere e spegnere 
+il led integrato sulla scheda in loop
+***************************************************************/
+
+// il LED integrato dell’ESP32 C3 Super Mini
+// funziona con logica invertita
+const int ledPin = 8;
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(ledPin, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(ledPin, HIGH);
+  Serial.println("LED SPENTO");
+  delay(1000);
+  digitalWrite(ledPin, LOW);
+  Serial.println("LED ACCESO");
+  delay(5000);
+}
+\end{verbatim}
+
+Infine, cliccare sul pulsante di Upload (Carica) in alto a sinistra nell'Ide per caricare il codice in memoria . 
+Premi il pulsante \textbf{RESET} della scheda per resettarla, toglierla dalla modalità bootloader e far quindi partire il codice.
+\newline
+\\
+Il LED integrato blu (indicatore LED) lampeggerà ogni secondo.
+\label{chap:4}
+\section{Come Eseguire il programma}
+\textit{Segue una breve guida per eseguire il programma.}
+\subparagraph{1) Clonare codice.} \\ \newline
+Innanzitutto bisogna clonare la repository contenente il programma dal seguente link: \href{https://github.com/daromacarlo/RISC-Visore}{Repository}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-05-05 013545.png}};
+    \end{tikzpicture}
+    \label{fig:tut4}
+\end{figure}
+\subparagraph{2)}Dopo averla clonata accedere al percorso Tesi-RISC-Visore/Validator
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-05-05 013809.png}};
+    \end{tikzpicture}
+    \label{fig:tut4}
+\end{figure}
+\subparagraph{3)}Flashare poi nella scheda il programma validator.ino controllando il numero di COM con cui la ESP scambia i dati (COM1, COM2, COM3...)
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.7\textwidth]{Immagine 2026-05-05 015033.png}};
+
+    \end{tikzpicture}
+    \label{fig:tut4}
+\end{figure}
+\\
+\subparagraph{4)}Aprire caricatore.py e modificare la variabile \textbf{PORTA} in base alla porta in uso dalla vostra ESP32
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.7\textwidth]{Immagine 2026-05-05 014337.png}};
+
+    \end{tikzpicture}
+                \caption{Righe 11-14 di caricatore.py}
+    \label{fig:tut4}
+\end{figure}
+\\
+\subparagraph{5)}Avviare il programma caricatore.py
+\label{chap:4}
+\section{Panoramica del Programma}
+\noindent
+Il programma sviluppato accetta in ingresso codice in linguaggio assembly RISC-V oppure una sua rappresentazione già compilata o semplicemente scritta a mano in formato esadecimale little-endian.\\ Il caricamento del programma avviene tramite una semplice interfaccia grafica realizzata in Python che comunica con il microcontrollore tramite una porta USB.
+Nel caso in cui l’input sia direttamente il codice esadecimale compilato o scritto a mano, il sistema procede con una serie di controlli sia statici sia dinamici, tutti rilevanti per garantire la correttezza e la sicurezza dell’esecuzione. Anche in questo caso, il codice viene sottoposto a una fase di analisi dinamica mediante una macchina virtuale. Tale macchina virtuale esegue il programma in maniera controllata, invece di utilizzare i registri hardware reali, impiega registri simulati memorizzati in memoria e utilizza una memoria simulata ottenuta spostando l’indirizzo base, \textit{è importante notare che la macchina virtuale simula solo la sezione} \texttt{.text} \textit{del programma; la sezione} \texttt{.data} \textit{viene ignorata. Questa scelta limita i programmi eseguibili alla sola esecuzione di codice che non effettui salti basati su dati caricati dalla memoria, limitazione che risulta comunque adeguata agli scopi del presente lavoro.} Inoltre, è presente un meccanismo di watchdog che impone un limite massimo al numero di istruzioni eseguibili; il superamento di tale soglia comporta l’interruzione dell’esecuzione.
+\newline
+Nel caso in cui l’input sia fornito in assembly RISC-V, esso viene inizialmente assemblato tramite lo strumento RARS, che produce il corrispondente codice macchina in formato esadecimale little-endian. Durante questa fase vengono effettuati i controlli statici come nel caso in cui venga inviato il codice esadecimale, alcuni dei quali superflui data la compilazione. Rilevante è il controllo degli opcode che verifica che tutte le istruzioni utilizzate siano compatibili con l’architettura ESP32.
+Successivamente, il codice viene eseguito dalla macchina virtuale prima citata, se tutte le verifiche hanno esito positivo, il codice viene infine eseguito nativamente sul microcontrollore.
+\newline
+In entrambi i casi gli errori vengono segnalati tramite i LED del microcontrollore e sulla console della semplice GUI Python.
+\newline
+
+\subsection{Tabella per riconoscimento errori segnalati dai Led}
+\noindent
+Per eseguire correttamente il programma sopra descritto bisogna dotare la scheda di un LED sul PIN 10 e niente più. Di seguito la tabella per riconoscere la natura dell'errore tramite i LED sul microcontrollore, se l'errore viene riconosciuto in fase di compilazione apparirà solo sulla console della GUI python.
+\\
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Blink LED} & \textbf{PIN LED} & \textbf{Errore} \\
+\hline
+1 blink lento + molti blink veloci & 8 (integrato) & errore opcode \\
+2 blink lenti + molti blink veloci & 8 (integrato) & errore word intere \\
+3 blink lenti + molti blink veloci & 8 (integrato) & errore sintassi \\
+4 blink lenti + molti blink veloci & 8 (integrato) & errore salti \\
+5 blink lenti + molti blink veloci & 8 (integrato) & errore scrittura registro zero \\
+6 blink lenti + molti blink veloci & 8 (integrato) & errore scrittura su registri critici \\
+7 blink lento + molti blink veloci & 8 (integrato) & errore memoria \\
+LOOP MORSE & 10 & loop inifinito \\
+\hline
+\end{tabular}
+\label{tab:led-errori}
+\end{table}
+\label{chap:5} 
+\section{Impieghi del programma}
+\noindent
+Oltre ad essere un esempio di programmazione su microcontrollori e quindi essere spunto pratico per implementazioni future,
+grazie a questo sistema, gli studenti che si stanno avvicinando allo studio di RISC-V possono esercitarsi con tre principali tipologie di attività differenti:
+
+\begin{enumerate}
+\item \textbf{Scrittura di codice in assembly RISC-V:} Si richiede di scrivere un programma senza utilizzare salti condizionati dipendenti da valori caricati in RAM dalla sezione \texttt{.data}. Il codice deve gestire l'accensione di LED collegati a specifici pin per un tempo prestabilito: il registro \texttt{a0} riceve una maschera di bit per selezionare i pin da attivare (ogni bit a 1 accende il pin corrispondente), mentre il registro \texttt{a1} ne definisce la durata in millisecondi. In alternativa, l'esercizio può richiedere di modificare i dati in memoria per evitare che il programma entri in un loop infinito.
+    
+    \item \textbf{Modifica di codice esistente:} viene fornito codice assembly funzionante e si chiede agli utenti di modificarne la sezione \texttt{.data} per far accendere un determinato LED per un intervallo di tempo definito, secondo la stessa logica della modalità precedente.
+    
+    \item \textbf{Modifica di codice compilato:} agli utenti viene fornito un file già compilato in formato esadecimale little-endian. Essi devono modificare l'esadecimale per correggere un determinato tipo di errore segnalato dai LED sul microcontrollore, il codice può contenere più errori.
+    
+    \item \textbf{Combinazioni avanzate:} è possibile proporre esercizi che combinano le modalità precedenti, ad esempio modifiche sia al codice assembly sia alla sezione dati per ottenere comportamenti specifici sui LED, oppure prevenire errori e loop nel codice compilato.
+    \newline
+    \\
+\textit{Le categorie di esercizio citate saranno approfondite e discusse nello specifico nei capitoli successivi.}
+\end{enumerate}
+\section{Contesto, analisi della letteratura corrente e collocazione}
+\subsection*{Evoluzione della Didattica nelle Architetture degli Elaboratori}
+
+Nel panorama degli strumenti software rivolti all'insegnamento e all'approfondimento pratico delle architetture degli elaboratori, la letteratura scientifica ha storicamente fatto affidamento su simulatori basati su architetture tradizionali o molto commerciali, come MIPS o x86. In questo contesto si collocano i contributi di Tartaglione \cite{tartaglione}, incentrato sulla generazione e correzione automatizzata di esercizi complessi relativi ai sistemi di memoria cache per ottimizzare i flussi di valutazione, e di Ziegler \cite{ziegler}, il quale ha sviluppato un simulatore MIPS orientato all'analisi visiva e all'apprendimento delle dinamiche interne del pipelining, consentendo agli studenti di osservare i conflitti e i flussi di dati nei cammini di esecuzione.
+
+Negli ultimi anni, tuttavia, si è assistito a una transizione netta verso l'architettura open-source RISC-V per i motivi etici prima citati e perché ormai considerata da Patterson e Hennessy come il nuovo standard di riferimento globale per l'insegnamento dell'hardware sia in ambito accademico che industriale \cite{acm_riscv_edu}. Questa evoluzione ha spinto la ricerca verso la definizione di nuove metodologie di insegnamento:
+
+\begin{enumerate}
+    \item \textbf{Simulatori Software e Piattaforme Web:} Strumenti basati su cloud che consentono di tracciare l'esecuzione delle istruzioni in ambienti virtuali o tramite browser \cite{ieee_cloud_sim}, offrendo anche strumenti di simulazione visiva per l'analisi dettagliata del flusso di esecuzione e della pipeline RISC-V \cite{sciencedirect_sim}. Strumenti efficaci per lo studio iniziale e per superare i vincoli logistici del laboratorio fisico ma tendono ad astrarre eccessivamente l'esperienza dello studente, tenendolo ben lontano dai problemi reali dell'elettronica.
+    
+    \item \textbf{Sistemi Basati su FPGA:} Progetti orientati alla sintesi hardware di core RISC-V didattici personalizzati su logiche programmabili, come il core "Educational RISC-V Micro" per laboratori sintetizzabili \cite{woset_micro}, o l'implementazione di core custom all'interno di corsi universitari \cite{iated_fpga}. Questo approccio offre una comprensione profonda della microarchitettura e dei circuiti digitali, ma presenta barriere d'ingresso notevoli, tra cui l'elevato costo delle schede di sviluppo FPGA e la complessità d'uso degli strumenti per interaggire con esse.
+\end{enumerate}
+In generale la letteratura recente evidenzia una sentita necessità di integrare microcontrollori reali ed economici all'interno dei percorsi universitari \cite{mdpi_computers}, spostando l'attenzione dai simulatori all'hardware reale.\cite{ieee_embedded_edu}. 
+\subsection*{Colloacazione del mio lavoro}
+Il lavoro di tesi da me proposto è un anello di congiunzione tra i due approcci precedentemente elencati in quanto consente agli studenti di mettere mano su hardware reale ed economico e allo stesso tempo usare uno strumento con barriera di ingresso facilmente olterepassabile con livello di astrazione modulabile in base alla modalità selezionata. Inoltre essendo il progetto libero rappresenta una base per future modifiche, ampliamenti e di conseguenza nuovi impieghi.
+
+
+
+\chapter{Il programma}
+
+\label{chap:1} 
+\section{Struttura del software}
+\noindent
+Il software sviluppato per questo progetto è stato scritto per l'80\% circa in assembly per RISC-V al fine di valorizzare e approfondire in maniera più significativa lo studio dei linguaggi a basso livello ed è diviso in 2 parti principali: caricatore.py e validator.ino.
+
+\label{chap:2} 
+\section{caricatore.py}
+\noindent
+Caricatore.py, Scritto in python, funge da caricatore di programmi RISC-V e digest esadecimali. Il programma comprende:
+\begin{itemize}
+\item Un sistema di compilazione per codice assembly RISC-V (tramite RARS),
+\item Un’interfaccia per il flashing su scheda ESP32 tramite Arduino CLI,
+\textit{Questi due software (\texttt{\textit{Rars}} e \texttt{\textit{Arduino-CLI}}) sono posizionati all'interno della cartella per essere invocati dal programma.}
+\item Una semplice GUI per facilitare la comunicazione con la scheda ESP32
+\\
+All’avvio del programma \texttt{caricatore.py} partirà la semplice GUI da cui sarà possibile selezionare il tipo di caricamento che vogliamo effettuare.
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.8\textwidth]{Immagine 2026-05-04 154342.png}};
+    \end{tikzpicture}
+                \caption{Panoramica GUI}
+    \label{fig:tut4}
+\end{figure}
+\begin{itemize}
+
+\item Se viene scelta la \textcolor{red!60}{MODALITÀ NO CONTROLLI}\\
+il codice caricato viene compilato da Rars e il digest esadecimale creato viene inviato a validator.ino. il programma che deve eseguire la scheda viene ricompilato aggiungendo il codice del programma assembly inviato nel file riscv1.S, il programma inviato verrà eseguito nativamente sulla scheda. NON VERRANNO ESEGUITI CONTROLLI.
+
+\item Se viene scelta la \textcolor{orange}{MODALITÀ ASSEMBLY}\\
+il codice caricato viene compilato da Rars e il digest esadecimale creato viene inviato a validator.ino. il programma che deve eseguire la scheda viene ricompilato aggiungendo il codice del programma assembly inviato nel file riscv1.S, se non si presenteranno errori nelle fasi successive il programma assembly inviato verrà eseguito nativamente sulla scheda.
+
+\item Se invece viene selezionata la \textcolor{green}{MODALITÀ MULTIPLA}
+\\
+il codice caricato viene compilato da Rars e il digest esadecimale creato viene inviato a validator.ino. Insieme a questo in viene chiesto di inserire in input 1 o più .data, il programma che deve eseguire la scheda viene ricompilato aggiungendo il codice del programma assembly inviato nel file riscv1.S, il programma viene eseguito nativamente con tutti i .data inseriti.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.8\textwidth]{Immagine 2026-05-04 194259.png}};
+    \end{tikzpicture}
+                \caption{Panoramica modalità MULTIPLA}
+    \label{fig:tut4}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-05-04 194056.png}};
+    \end{tikzpicture}
+                \caption{Esempio di esecuzione modalità MULTIPLA}
+    \label{fig:tut4}
+\end{figure}
+
+\item Se invece viene selezionata la \textcolor{blue}{MODALITÀ DIRETTA}
+\\
+Il digest esadecimale caricato viene inviato a validator.ino. per compiere tutti i controlli che verranno descritti nelle sezioni successive, non verrà eseguito nativamente.
+
+\item Se viene scelta la \textcolor{black!50}{MODALITÀ TEST}\\
+Questa procedura non prevede il caricamento di alcun codice esecutivo; il suo scopo è esclusivamente quello di verificare il corretto funzionamento dei LED collegati alla scheda.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{PLJ1QJ~1.PNG}};
+    \end{tikzpicture}
+        \caption{Diagramma UML di flusso di caricatore.py}
+    \label{fig:tut4}
+\end{figure}
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.8\textwidth]{Immagine 2026-05-04 160051.png}};
+    \end{tikzpicture}
+        \caption{Esempio di caricamento}
+    \label{fig:tut4}
+\end{figure}
+\end{itemize}
+
+\section{validator.ino}
+\noindent
+Validator.ino, scritto in C++, compie diversi compiti, principalmente riceve input da seriale (codice Assembly o digest esadecimale), identifica il tipo di input ed esegue, su di esso, controlli statici e dinamici sul codice passato chiamando le funzioni assembly \texttt{controlli\_statici.S} e \texttt{controllo\_dinamico\_loop.S} (approfondite nei successivi sottocapitoli)
+Se il codice è valido per tutti i controlli, viene eseguito (solo nel caso in cui viene passato codice assembly RISC-V non digerito), comprende il gestore dei LED per gestire stati ed errori. \\
+\textit{Vediamo ora nel dettaglio i vari segmenti:} \newline \\
+\subsection{Gestore LED}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.8\textwidth]{Immagine 2026-04-03 172039.png}}
+    \end{tikzpicture}
+    \caption{Righe 30-66 di validator.ino}
+    \label{fig:tut3}
+\end{figure}
+\newline \noindent
+Le funzioni \texttt{trasmettiLoopMorse} e \texttt{gestisciBlink} sono state implementate per fornire un feedback visivo, da parte dei LED della scheda, degli errori in maniera semplice.
+
+La funzione \textcolor{orange}{\texttt{gestisciBlink}} si occupa di segnalare errori statici rilevati dalla funzione {controlli\_statici}.
+gestisci blink ottiene in input un valore n da 1 a 7 corrispondente alla tipologia di errore statico e segnala questo con n blink lenti e 5 secondi di blink veloci sul LED integrato sul PIN 8.
+
+La funzione \textcolor{orange}{\texttt{trasmettiLoopMorse}}, invece, segnala errori dinamici rilevati durante l’esecuzione della funzione \texttt{controlli\_dinamico\_loop}, il segnale visivo consiste nel LED collegato sul PIN 10 che lampeggia secondo la sequenza del codice Morse corrispondente alla parola “LOOP” ripetuta solo una volta. \newline \\
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.8\textwidth]{Immagine 2026-05-04 194728.png}}
+    \end{tikzpicture}
+    \caption{Righe 237-270 di validator.ino (Esempio di gestore led per esercizi)}
+    \label{fig:tut3}
+\end{figure}
+\noindent
+Questo frammento di codice è rappresentativo della logica di gestione utilizzata per l'attivazione temporizzata dei LED interfacciati al microcontrollore. \texttt{Res3.pin\_led} è un array di bit in cui ciascun valore identifica lo stato del pin corrispondente: se un bit è impostato a 1 allora il LED associato sarà acceso.
+
+
+\subsection{Ricezione e identificazione tipologia input}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.8\textwidth]{Immagine 2026-05-04 160337.png}}
+    \end{tikzpicture}
+    \caption{Righe 68-81 di validator.ino}
+    \label{fig:tut3}
+\end{figure}
+\newline \noindent
+In questa sezione, il codice legge caratteri dalla seriale, costruisce una stringa (inputBuffer) e quando riceve \texttt{\textbackslash n} o \texttt{\textbackslash r} considera il messaggio completo, salva la lunghezza dell'input in datalen, questa verrà utilizzata dai controlli assembly per capire fin dove finisce il buffer in input. Caricatore.py invia come primi 4 caratteri della stringa un etichetta che può essere "ASM", "HEX", "AMU", "ANC" o "TST" grazie a questa etichetta validator.ino può identificare la tipologia di input e agire di conseguenza. 
+
+\begin{itemize}
+\item ASM identifica un input di tipo assembly. 
+\item HEX identifica un input di tipo esadecimale. digest.
+\item AMU identifica un input di tipo assembly multiplo.
+\item ANC identifica un input di tipo assembly al quale non si vogliono applicare controlli.
+\item TST identifica un input di tipo test.
+\end{itemize}
+
+\subsection{Esecuzione controlli}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.9\textwidth]{Immagine 2026-05-04 191712.png}}
+    \end{tikzpicture}
+    \caption{Righe 115-142 di validator.ino}
+    \label{fig:tut3}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.9\textwidth]{Immagine 2026-05-04 191758.png}}
+    \end{tikzpicture}
+    \caption{Righe 145-190 di validator.ino}
+    \label{fig:tut3}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.9\textwidth]{Immagine 2026-05-04 192100.png}}
+    \end{tikzpicture}
+    \caption{Righe 193-214 di validator.ino}
+    \label{fig:tut3}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.9\textwidth]{Immagine 2026-05-04 191832.png}}
+    \end{tikzpicture}
+    \caption{Righe 90-126 di validator.ino}
+    \label{fig:tut3}
+\end{figure}
+\newline \noindent
+In questa sezione, in base al tipo di input, vengono invocate le funzioni assembly \texttt{controlli\_statici.S} e \texttt{controllo\_dinamico\_loop.S} , incaricate di eseguire i controlli sul codice ricevuto. Eventuali anomalie rilevate, sia in fase di analisi statica sia durante il controllo dinamico, vengono segnalate tramite l’utilizzo dei LED presenti sulla scheda gestiti dal gestore led e tramite la console integrata nella semplice GUI python.
+\noindent
+Qualora il codice superi con successo tutte le fasi di verifica, si procede con l’esecuzione del programma caricato. Tale esecuzione avviene solo nel caso in cui l’input fornito sia costituito da codice assembly non precedentemente compilato.
+\newline
+\\
+\label{chap:4} 
+\section{controlli\_statici.S}
+\noindent
+controlli\_statici.S, è un file scritto in Assembly RISC-V, compie diversi controlli sul codice esadecimale che arriva in input da validator.ino. 
+controlli\_statici.S è composto da 2 parti principali, una prima parte che ricostruisce le word di istruzioni dall'esadecimale in input e una seconda parte che che chiama i controlli su ogni singola word ricostruita.
+\newline
+\\
+\subsection{Procedura PRE-POST controlli}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.8\textwidth]{Immagine 2026-04-03 190050.png}}
+    \end{tikzpicture}
+    \caption{Righe 6-16 di controlli\_statici.S}
+    \label{fig:tut3}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.8\textwidth]{Immagine 2026-04-03 190201.png}}
+    \end{tikzpicture}
+    \caption{Righe 112-124 di controlli\_statici.S}
+    \label{fig:tut3}
+\end{figure}
+\noindent
+I registri \texttt{sp, ra, s0, s1, s2, s3, s4, s9, s10, s11} sono registri sensibili per le schede della famiglia ESP32 perché contengono informazioni critiche per il corretto funzionamento del contesto di esecuzione del processore, in particolare:
+\begin{itemize}
+\item \texttt{sp} \textit{(stack pointer)}: punta alla cima dello stack; se viene alterato, si corrompono le chiamate di funzione e il salvataggio dei dati locali.
+\item \texttt{ra} \textit{(return address)}: contiene l’indirizzo di ritorno delle funzioni; modificarlo può causare ritorni errati o crash.
+\item \texttt{s0--s11} \textit{(saved registers)}: registri calcolati come “callee-saved” secondo la convenzione ABI RISC-V utilizzata dall’ESP32; servono a mantenere lo stato delle funzioni chiamanti. Se vengono modificati senza salvaguardia, si perdono valori importanti tra le chiamate di funzione.
+\end{itemize}
+questi registri non vanno quindi sporcati dal codice, per questo vengono salvati i dati contenuti nei registri prima dei controlli nello stack e vengono ricaricati nei registri a fine controlli. \textbf{La procedura è fondamentale per la corretta esecuzione del codice.}
+\subsection{Ricostruzione Word istruzione}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-04-03 185351.png}}
+    \end{tikzpicture}
+    \caption{Righe 25-67 di controlli\_statici.S}
+    \label{fig:tut3}
+\end{figure}
+\newline \noindent
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.6\textwidth]{Immagine 2026-04-03 185625.png}}
+    \end{tikzpicture}
+    \caption{Righe 69-85 di controlli\_statici.S}
+    \label{fig:tut3}
+\end{figure}
+\newline \noindent
+In questa sezione, Il ciclo "while" legge 8 caratteri ASCII esadecimali dall’input per volta.
+Ogni carattere viene convertito in un nibble (4 bit), e tutti i nibble vengono combinati in una word a 32 bit tramite shift e somme [righe 69-85].
+In questo modo, la stringa esadecimale viene trasformata in un valore binario pronto per i controlli.
+Se il carattere letto in questo ciclo di ricostruzione è un carattere numerico il programma sottrae 48 al valore letto per ottenere il corrispettivo numero, se invece il ciclo incontra una lettera (A-F) sottrae 48 + 39 per trasformarlo nel corrispettivo valore numerico.\\
+\\
+Per chiarire meglio il concetto, si riporta la seguente tabella.
+\begin{figure}[H]
+    \centering
+        {\includegraphics[width=0.7\textwidth]{1920px-USASCII_code_chart.svg.png}}
+    \caption{Tabella ASCII}
+    \label{fig:tut3}
+\end{figure}
+\newline \noindent
+
+\subsection{Esecuzione Controlli statici}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.8\textwidth]{Immagine 2026-04-04 120802.png}}
+    \end{tikzpicture}
+    \caption{Righe 87-110 di controlli\_statici.S}
+    \label{fig:tut3}
+\end{figure}
+\newline \noindent
+In questa sezione vengono chiamati i controlli statici,nell'ordine viene controllato:
+\begin{enumerate}
+    \item se l'opcode della word è riconoscito dall'architettura della ESP32
+    \item se non ci sono errori in memoria quindi se la word carica o preleva dalla memoria dei dati che sono allineati al byte.
+    \item se non viene scritto su registro \texttt{zero}, viene inanzitutto controllato che non si tratti di una nop word, se la word non è una nop word e il programma tenta di scrivere su \texttt{zero} allora viene segnalato un errore.
+    \item se il programma tenta di scrivere su registri critici
+    \item se non ci sono errori di sintassi di altra natura
+    \item se ci sono errori relativi ai salti come ad esempio j fuori programma o j da una istruzione alla stessa.
+\end{enumerate}
+
+\subsection{Un esempio di controllo statico}
+\noindent
+\textit{Data l'impossibilità di esporre esplicitamente in questa trattazione il codice di tutti i controlli propongo quello più significativo, gli altri seguono più o meno la stessa struttura.}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-04-04 121724.png}}
+    \end{tikzpicture}
+    \caption{Righe 7-51 di Controllo\_opcode.S}
+    \label{fig:tut3}
+\end{figure}
+\noindent
+In questa sezione alla word in entrata viene applicata una maschera [Riga 8] per esplicitare i bit dell'opcode, i bit ottenuti vengono quindi confrontati con l’insieme degli opcode che il microcontrollore è in grado di interpretare, per determinare quale istruzione eseguire.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-04-04 122009.png}}
+    \end{tikzpicture}
+    \caption{Righe 56-75 di Controllo\_opcode.S}
+    \label{fig:tut3}
+\end{figure}
+\newline \noindent
+Se la word in ingresso ha un opcode che il microcontrollore non riconosce il programma si sposta sull'etichetta di segnalazione errori [Righe 56- 69] viene caricato 1 sul registro \texttt{a0} per far compiere al programma validator.ino un blink lento e 5 secondi di blink veloci al LED collegato al PIN 8 e viene ripristinato lo stato dei registri critici, altrimenti si torna al programma chiamante senza segnalare errori di alcuna natura.
+
+\label{chap:5} 
+\section{controllo\_dinamico\_loop.S}
+\noindent
+Il file controllo\_dinamico\_loop.S è scritto in Assembly RISC-V e ha il compito di interpretare l’esadecimale generato passato da validator.ino. Il programma funziona come una sorta di macchina virtuale che simula l’esecuzione delle istruzioni contenute nella sezione \texttt{.text}.
+A differenza di un’esecuzione nativa, i registri non vengono utilizzati direttamente: quando è necessario salvare dei valori nei registri, questi vengono memorizzati in una porzione di memoria RAM dedicata \texttt{(REGISTRI\_VIRTUALI: .space 128)}, che emula il comportamento dei registri stessi. Inoltre, i dati che normalmente verrebbero salvati in memoria vengono salvati in una sezione di memoria con indirizzo spostato, creando così una sorta di memoria virtuale. È fondamentale ribadire che il programma simula solo le istruzioni della sezione \texttt{.text}, senza gestire la sezione \texttt{.data}, come già descritto nelle sezioni precedenti. All'inizio di questa sezione viene inizializzato un watchdog impostato a 4096 passi \texttt{(MAXPASSI .word 4096)} nel caso in cui questa soglia venisse superata il progamma segnala l'errore di loop infinito.
+\textbf{Questa procedura non riconosce loop infiniti veri e propri} anche perché per il famoso principio dell'halting problem è impossibile riconoscere un loop infinito, tuttavia, limitando i casi ai soli accademici e didattici porre una soglia anche non molto alta è abbastanza al fine di riconoscere programmi che non terminano.
+\subsection{Procedura PRE-POST controllo}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.8\textwidth]{Immagine 2026-04-04 161458.png}}
+    \end{tikzpicture}
+    \caption{Righe 13-23 di Controllo\_dinamico\_loop.S}
+    \label{fig:tut3}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-04-04 161623.png}}
+    \end{tikzpicture}
+    \caption{Righe 154-194 di controllo\_dinamico\_loop.S}
+    \label{fig:tut3}
+\end{figure}
+\newline \noindent
+I registri \texttt{sp, ra, s0, s1, s2, s3, s4, s9, s10, s11} sono registri sensibili per le schede della famiglia ESP32 perché contengono informazioni critiche per il corretto funzionamento del contesto di esecuzione del processore, in particolare:
+\begin{itemize}
+\item \texttt{sp} \textit{(stack pointer)}: punta alla cima dello stack; se viene alterato, si corrompono le chiamate di funzione e il salvataggio dei dati locali.
+\item \texttt{ra} \textit{(return address)}: contiene l’indirizzo di ritorno delle funzioni; modificarlo può causare ritorni errati o crash.
+\item \texttt{s0--s11} \textit{(saved registers)}: registri calcolati come “callee-saved” secondo la convenzione ABI RISC-V utilizzata dall’ESP32; servono a mantenere lo stato delle funzioni chiamanti. Se vengono modificati senza salvaguardia, si perdono valori importanti tra le chiamate di funzione.
+\end{itemize}
+\subsection{Inizializzazione contesto}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-04-04 162307.png}}
+    \end{tikzpicture}
+    \caption{Righe 1-10 di controllo\_dinamico\_loop.S}
+    \label{fig:tut3}
+\end{figure}
+\newline \noindent
+In questa sezione viene inizializzato il contesto del simulatore:
+\begin{itemize}
+\item \texttt{CONTAPASSI}: contatore delle operazioni simulate; viene incrementato di 1 ad ogni operazione eseguita.
+\item \texttt{MAXPASSI}: valore soglia massimo per \texttt{CONTAPASSI}; il suo superamento genera un errore.
+\item \texttt{REGISTRI\_VIRTUALI}: area di memoria riservata alla gestione dei registri virtuali.
+\item \texttt{MEMORIA\_VIRTUALE}: area di memoria dedicata alla simulazione della memoria virtuale.
+\end{itemize}
+\subsection{Ricostruzione word istruzione}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.7\textwidth]{Immagine 2026-04-15 030054.png}}
+    \end{tikzpicture}
+    \caption{Righe 44-91 di controllo\_dinamico\_loop.S}
+    \label{fig:tut3}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.7\textwidth]{Immagine 2026-04-15 030556.png}}
+    \end{tikzpicture}
+    \caption{Righe 93-108 di controllo\_dinamico\_loop.S}
+    \label{fig:tut3}
+\end{figure}
+\noindent
+La prima parte cruciale in questo processo di simulazione consiste nel prelevare i dati da programma validator.ino e decodificarli per simularli in seguito. i dati arrivano in formato esadecimale in un buffer scritto sul registro \texttt{a0} e come nella sezione precedente  Il ciclo "while" legge 8 caratteri ASCII esadecimali dall’input
+per volta. Ogni carattere viene convertito in un nibble (4 bit), e tutti i nibble
+vengono combinati in una word a 32 bit tramite shift e somme [righe 93-108].
+In questo modo, la stringa esadecimale viene trasformata in un valore binario
+pronto per essere simulato.
+\subsection{Simulazione istruzione}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.9\textwidth]{Immagine 2026-04-15 030903.png}}
+    \end{tikzpicture}
+    \caption{Righe 110-132 di controllo\_dinamico\_loop.S}
+    \label{fig:tut3}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.7\textwidth]{Immagine 2026-04-15 031107.png}}
+    \end{tikzpicture}
+    \caption{Righe 134-151 di controllo\_dinamico\_loop.S}
+    \label{fig:tut3}
+\end{figure}
+\noindent
+In questa sezione di \texttt{controllo\_dinamico\_loop.S} viene estratto l'opcode [riga 110] dell'istruzione appena costruita, le varie istruzioni beq [righe 112-132] funzionano da multiplexer direzionale, in base all'opcode il flusso viene spostato su una determinata etichetta e successivamente avverrà la simulazione vera e propria. Ad esempio, se l'istruzione appena ricostruita è un salto condizionato (tipo B con opcode 99) il multiplexer sposterà il flusso del programma sull'etichetta \texttt{vai\_simula\_B} dopodiché verrà chiamata la funzione \texttt{simula\_B} che simulerà l'istruzione. Dopo la simulazione \texttt{simula\_B} torna al chiamante che compie un salto incondizionato all'inizio del ciclo principale (\texttt{while}) per procedere al fetch dell'istruzione puntata dal \texttt{PC} simulato [righe 136, 139, 142, 145, 148, 151 \texttt{(j while)}].
+\\
+\\
+Quando una istruzione viene passata alle varie funzioni di simulazione, viene divisa in pezzi per capire di che istruzione si tratta, e per distinguerne gli operandi. Per chiarire questo concetto la tabella seguente illustra la suddivisione dei bit per i vari formati:
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{3808.1535301636.png}}
+    \end{tikzpicture}
+    \caption{set istruzioni RISC-V}
+    \label{fig:tut3}
+\end{figure}
+\noindent
+\textbf{\textit{Nelle sezioni seguenti viene descritto nello specifico come vengono simulate le istruzioni.}}
+\subsection{simula\_B.S}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-04-15 033640.png}};
+    \end{tikzpicture}
+    \caption{Righe 3-14 di simula\_B.S}
+    \label{fig:simulaB1}
+\end{figure}
+\noindent
+Il modulo \texttt{simula\_B} è responsabile della simulazione delle istruzioni di salto condizionato. Tali istruzioni modificano il flusso di esecuzione del programma aggiornando il \texttt{PC} (Program Counter) sommando il valore del registro \texttt{PC} al campo \texttt{imm}, in funzione del risultato del confronto tra i valori contenuti nei registri \texttt{rs1} e \texttt{rs2}. Possono essere effettuati vari tipi di confronti e in fase di decodifica la tipologia viene dedotta dal valore del campo \texttt{func3}.
+
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-04-15 040900.png}};
+    \end{tikzpicture}
+    \caption{Righe 18-57 di simula\_B.S}
+    \label{fig:simulaB2}
+\end{figure}
+\noindent
+Nella prima sezione del codice viene eseguita la decodifica dell’istruzione in ingresso, dalla quale vengono estratti i campi \texttt{rs1}, \texttt{rs2}, \texttt{func3}.
+In seguito, viene effettuata la ricostruzione del campo imm. dato che in
+questo formato di istruzioni il campo imm è diviso in più parti nella word d'istruzione
+vengono estratti separatamente i vari pezzi(bit di segno, bit centrali e bit meno
+significativi) e successivamente ricostruito combinando questi pezzi con varie
+operazioni logiche.
+Una volta ricostruito, l’immediato viene esteso con segno per ottenere il valore
+finale a 32 bit.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-04-15 041612.png}};
+    \end{tikzpicture}
+    \caption{Righe 61-84 di simula\_B.S}
+    \label{fig:simulaB3}
+\end{figure}
+\noindent
+Successivamente, i valori contenuti nei registri \texttt{rs1} e \texttt{rs2} vengono caricati dalla memoria dei registri virtuali. In base al valore di \texttt{func3}, il flusso di esecuzione viene indirizzato verso una specifica etichetta, ognuna delle quali implementa una diversa operazione di confronto (uguaglianza, disuguaglianza, minore, maggiore o uguale, sia in versione signed che unsigned).
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-04-15 042752.png}};
+    \end{tikzpicture}
+    \caption{Righe 86-113 di simula\_B.S}
+    \label{fig:simulaB4}
+\end{figure}
+\noindent
+Infine, viene eseguita la valutazione della condizione: se il confronto ha esito positivo, il \texttt{PC} simulato viene aggiornato sommando l’immediato (\texttt{PC = PC + imm}); altrimenti, il \texttt{PC} simulato avanza di una word per passare all’istruzione successiva. Terminata l’operazione di simulazione, il flusso torna a \texttt{controllo\_dinamico\_loop.S}.
+\subsection{simula\_R.S}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-04-15 034216.png}};
+    \end{tikzpicture}
+    \caption{Righe 3-17 di simula\_R.S}
+    \label{fig:simulaR1}
+\end{figure}
+\noindent
+Il modulo \texttt{simula\_R} è responsabile della simulazione delle istruzioni di tipo R. Queste sono operazioni aritmetico-logiche tra i valori contenuti nei registri \texttt{rs1} e \texttt{rs2}, producendo un risultato che viene salvato nel registro di destinazione \texttt{rd}. La specifica operazione da eseguire è determinata dai campi \texttt{func3} e, nei casi necessari, anche dal campo \texttt{func7}.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-04-15 043508.png}};
+    \end{tikzpicture}
+    \caption{Righe 26-68 di simula\_R.S, Sezione di decodifica e caricamento operandi}
+    \label{fig:simulaR2}
+\end{figure}
+\noindent
+Nella prima fase del codice viene effettuata la decodifica dell’istruzione, dalla quale vengono estratti i campi \texttt{rs1}, \texttt{rs2}, \texttt{rd}, \texttt{func3} e \texttt{func7}. Successivamente, i valori contenuti nei registri \texttt{rs1} e \texttt{rs2} vengono caricati dalla memoria dei registri virtuali.
+\noindent
+\newline
+In base al valore del campo \texttt{func3}, il flusso di esecuzione del programma viene indirizzato verso una specifica etichetta, ognuna delle quali implementa una diversa operazione aritmetico-logica (ad esempio somma, sottrazione, shift, operazioni logiche o confronti).
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.5\textwidth]{Immagine 2026-04-15 043419.png}};
+    \end{tikzpicture}
+    \caption{Esempio di operazione aritmetica}
+    \label{fig:simulaR3}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.5\textwidth]{Immagine 2026-04-15 044806.png}};
+    \end{tikzpicture}
+    \caption{Scrittura del risultato nel registro di destinazione}
+    \label{fig:simulaR4}
+\end{figure}
+\noindent
+Nella fase finale viene eseguita l’operazione specificata dall’istruzione: il risultato viene calcolato e successivamente salvato nel registro di destinazione \texttt{rd} simulato all’interno della memoria dei registri virtuali.
+\newline
+\noindent
+Infine, il \texttt{PC} simulato viene incrementato per puntare all’istruzione successiva. Terminata l’esecuzione il programma torna al chiamante ovvero al modulo \texttt{controllo\_dinamico\_loop.S}.
+\subsection{simula\_S.S}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-04-15 034034.png}}
+    \end{tikzpicture}
+    \caption{Righe 3-11 di simula\_S.S}
+    \label{fig:tut3}
+\end{figure}
+\noindent
+Il modulo \texttt{simula\_S} è responsabile della simulazione delle istruzioni di tipo S.
+Queste sono operazioni di allocazione dati nella memoria.
+vengono salvati i dati contenuti in \texttt{rs2} nell'indirizzo di memoria \texttt{rs2} + \texttt{imm}, ci sono vari tipi di funzioni di stoccaggio dati, la specifica operazione da eseguire è determinata dal campo func3.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-04-15 072521.png}}
+    \end{tikzpicture}
+    \caption{Righe 17-38 di simula\_S.S}
+    \label{fig:tut3}
+\end{figure}
+\noindent
+Nella prima sezione del codice viene eseguita la decodifica dell’istruzione in ingresso, dalla quale vengono estratti i campi \texttt{rs1}, \texttt{rs2}, \texttt{func3}.
+In seguito, viene effettuata la ricostruzione del campo imm. dato che in
+questo formato di istruzioni il campo imm è diviso in più parti nella word d'istruzione
+vengono estratti separatamente i vari pezzi(bit di segno, bit centrali e bit meno
+significativi) e successivamente ricostruito combinando questi pezzi con varie
+operazioni logiche.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-04-15 073443.png}}
+    \end{tikzpicture}
+    \caption{Righe 40-51 di simula\_S.S}
+    \label{fig:tut3}
+\end{figure}
+\noindent
+In t5 viene salvato l'indirizzo dove salvare i dati, questo indirizzo è ottenuto sommando al valore di rs1 l'indirizzo di offset + il campo immediato.\\
+Successivamente,
+i valori contenuti nei registri rs1 e rs2 vengono caricati dalla memoria dei
+registri virtuali.
+In base al valore del campo func3, il flusso di esecuzione viene indirizzato verso
+una specifica etichetta, ognuna delle quali implementa una diversa operazione di allocazione dati (byte, word, half)
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-04-15 073501.png}}
+    \end{tikzpicture}
+    \caption{Righe 54-73 di simula\_S.S}
+    \label{fig:tut3}
+\end{figure}
+\noindent
+Nella fase finale viene eseguita l’operazione specificata dall’istruzione (campo func3), i dati vengono salvati nella memoria simulata (spostata con offset).
+\noindent
+Infine, il \texttt{PC} simulato viene incrementato per puntare all’istruzione successiva. Terminata l’esecuzione il programma torna al chiamante ovvero al modulo \texttt{controllo\_dinamico\_loop.S}.
+\subsection{simula\_I.S}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-04-15 034943.png}}
+    \end{tikzpicture}
+    \caption{Righe 3-28 di simula\_I.S}
+    \label{fig:tut3}
+\end{figure}
+\noindent
+Il modulo \texttt{simula\_I} è responsabile della simulazione delle istruzioni di tipo I cioè operazioni aritmetico-logiche tra un registro \texttt{rs1} e un valore immediato \texttt{imm}, oppure operazioni di accesso alla memoria, salto o chiamate di sistema (\textit{che tuttavia non verrano usate}). Il risultato dell’operazione viene salvato nel registro di destinazione \texttt{rd}. Il comportamento dell’istruzione dipende dal campo \texttt{opcode} e dal campo \texttt{func3}.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-04-15 050444.png}}
+    \end{tikzpicture}
+    \caption{Righe 32-48 di simula\_I.S}
+    \label{fig:tut3}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-04-15 050856.png}}
+    \end{tikzpicture}
+    \caption{Righe 50-58 di simula\_I.S}
+    \label{fig:tut3}
+\end{figure}
+\noindent
+Nella prima fase del codice viene effettuata la decodifica dell’istruzione, dalla quale vengono estratti i campi \texttt{rs1}, \texttt{rd}, \texttt{func3} e l’immediato \texttt{imm}, il valore contenuto nel registro \texttt{rs1} viene caricato dalla memoria dei registri virtuali.
+
+\noindent
+Nel caso delle istruzioni aritmetico-logiche immediate, viene effettuata un’ulteriore selezione in base al campo \texttt{func3}. Ogni etichetta implementa una specifica operazione. Il risultato viene poi salvato nel registro di destinazione \texttt{rd}.
+\\
+Se invece la word non rappresenta un'istruzione aritmetico-logico immediata avremo una tra le seguenti situazioni:
+\begin{itemize}
+    \item \textbf{Istruzione di load:} viene calcolato l'indirizzo di memoria come somma tra \texttt{rs1} e \texttt{imm}. Il dato viene poi letto dalla memoria virtuale e salvato nel registro \texttt{rd} simulato.
+    
+    \item \textbf{Istruzione \texttt{JALR}:} viene salvato nel registro \texttt{rd} simulato l'indirizzo di ritorno (\texttt{PC + 4}), mentre il \texttt{PC} simulato viene aggiornato con il valore \texttt{rs1 + imm}.
+    
+    \item \textbf{Istruzione di sistema:} il flusso viene deviato in base al valore dell'immediato. Nel caso di \texttt{EBREAK} l'esecuzione termina, mentre \texttt{ECALL} comporta un semplice avanzamento del programma.
+    \textit{Questo tipo di funzioni non verranno usate negli esercizi.}
+    
+    \item \textbf{Aggiornamento del PC e ritorno:} per tutte le istruzioni che non modificano direttamente il flusso di controllo, il \texttt{PC} simulato viene aumentato di una word per puntare all'operazione subito successiva a quella che è stata appena simulata. Terminata l'esecuzione, il flusso torna al modulo \texttt{controllo\_dinamico\_loop.S}.
+\end{itemize}.
+\subsection{simula\_J.S}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-04-15 034527.png}}
+    \end{tikzpicture}
+    \caption{Righe 3-8 di simula\_J.S}
+    \label{fig:tut3}
+\end{figure}
+\noindent
+Il modulo \texttt{simula\_J} è responsabile della simulazione delle istruzioni di tipo J. In particolare, implementa l’istruzione \texttt{JAL} (Jump And Link), che consente di effettuare un salto salvando contemporaneamente l’indirizzo di ritorno nel registro di destinazione \texttt{rd}.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-04-15 061429.png}}
+    \end{tikzpicture}
+    \caption{Righe 19-21 di simula\_J.S}
+    \label{fig:tut3}
+\end{figure}
+\noindent
+Nella prima fase del codice viene estratto il campo \texttt{rd} dall’istruzione. Successivamente, viene calcolato il valore \texttt{PC + 4}, che rappresenta l’indirizzo dell’istruzione subito successiva a quella in corso di simulazione, questo valore viene salvato nel registro \texttt{rd} all’interno della memoria dei registri virtuali per essere utilizzato in seguito.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-04-15 061445.png}}
+    \end{tikzpicture}
+    \caption{Righe 26-51 di simula\_J.S}
+    \label{fig:tut3}
+\end{figure}
+\noindent
+In seguito, viene effettuata la ricostruzione del campo \texttt{imm}. dato che in questo formato di istruzioni il campo \texttt{imm} è diviso in più parti nella word vengono estratti separatamente i vari pezzi (bit di segno, bit centrali e bit meno significativi) e successivamente ricostruito combinando questi pezzi con varie operazioni logiche.
+\newline
+\noindent
+Una volta ricostruito, l’immediato viene esteso con segno per ottenere il valore finale a 32 bit.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-04-15 061458.png}}
+    \end{tikzpicture}
+    \caption{Righe 54-57 di simula\_J.S}
+    \label{fig:tut3}
+\end{figure}
+
+Infine, l’immediato viene  sommato al \texttt{PC} simulato, simulando così il salto (\texttt{PC = PC + imm}). 
+
+Terminata la simulazione dell’istruzione, il controllo viene restituito al chiamante \texttt{controllo\_dinamico\_loop.S}.
+\subsection{simula\_U.S}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-04-15 160303.png}}
+    \end{tikzpicture}
+    \caption{Righe 3-8 di simula\_U.S}
+    \label{fig:tut3}
+\end{figure}
+\noindent
+Il modulo \texttt{simula\_U} è responsabile della simulazione delle istruzioni di tipo U, in particolare \texttt{LUI} (Load Upper Immediate) e \texttt{AUIPC} (Add Upper Immediate to PC). 
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-04-15 061947.png}}
+    \end{tikzpicture}
+    \caption{Righe 12-28 di simula\_U.S}
+    \label{fig:tut3}
+\end{figure}
+\noindent
+Nella fase iniziale del codice viene estratto il campo \texttt{rd} dall’istruzione tramite shift e mascheramento. In parallelo, viene ricostruito l’immediato U-type: i 20 bit più significativi vengono isolati dall’istruzione e successivamente spostati di 12 posizioni a sinistra, ottenendo il valore \texttt{imm << 12}.
+\newline
+\noindent
+Il modulo identifica il tipo di istruzione confrontando il codice operativo (\texttt{s10}) con i valori noti:
+\begin{itemize}
+    \item \texttt{55} $\rightarrow$ \texttt{LUI}
+    \item \texttt{23} $\rightarrow$ \texttt{AUIPC}
+\end{itemize}
+\noindent
+In base al risultato del confronto, il flusso viene indirizzato alla relativa sezione di esecuzione.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-04-15 062045.png}}
+    \end{tikzpicture}
+    \caption{Righe 30-57 di simula\_U.S}
+    \label{fig:tut3}
+\end{figure}
+\noindent
+Nel caso dell’istruzione \texttt{LUI}, il valore dell’immediato già scalato (\texttt{imm << 12}) viene direttamente copiato nel registro temporaneo \texttt{s11}. Questo valore rappresenta il contenuto da scrivere nel registro di destinazione \texttt{rd}.
+\newline
+\noindent
+Nel caso dell’istruzione \texttt{AUIPC}, il comportamento è differente: il valore immediato viene sommato al \texttt{PC simulato} (\texttt{s2}). Il risultato intermedio viene elaborato attraverso alcune operazioni aritmetiche e di aggiustamento, fino a ottenere il valore finale che rappresenta:
+
+\[
+rd = PC_{simulato} + (imm << 12)
+\]
+\noindent
+Il risultato viene infine salvato in \texttt{s11}.
+\newline
+\noindent
+Una volta calcolato il valore finale, il modulo calcola l’indirizzo del registro virtuale corrispondente a \texttt{rd} tramite:
+
+\begin{itemize}
+    \item shift del valore di \texttt{rd}
+    \item somma con la base della memoria registri (\texttt{a5})
+\end{itemize}
+\newline
+\noindent
+Il valore contenuto in \texttt{s11} viene quindi scritto in memoria.
+\noindent
+Infine, il Program Counter simulato viene aggiornato avanzando di una word(\texttt{PC = PC + 8}), e il flusso torna al modulo chiamante \texttt{controllo\_dinamico\_loop.S}.
+
+% --- PRIMA IMMAGINE (Orizzontale) + TITOLO SEZIONE ---
+% Inseriamo la sezione dentro il landscape così sta insieme alla prima immagine
+\begin{landscape}
+    \section{Il diagramma UML di flusso del programma}
+    \label{chap:6} 
+
+    \begin{figure}[h!] 
+        \centering
+        \includegraphics[
+            width=0.75\linewidth,
+            height=\textheight, % Ridotto leggermente per far stare il titolo della sezione nella stessa pagina
+            keepaspectratio
+        ]{BLNRRK~1.PNG}
+        \caption{Diagramma UML di flusso generale (Validator.ino)}
+        \label{fig:immagine_1}
+    \end{figure}
+\end{landscape}
+
+
+% --- SECONDA IMMAGINE (Verticale) ---
+% Usiamo [p] al posto di [H] per centrarla verticalmente nella sua pagina senza creare vuoti
+\begin{figure}[p] 
+    \centering
+    \begin{tikzpicture}
+        \node[
+            blur shadow={shadow blur steps=10, shadow xshift=0pt, shadow yshift=0pt},
+            inner sep=0pt
+        ] {
+            \includegraphics[
+                width=0.8\textwidth,
+                height=0.75\textheight, % Controllo dell'altezza per evitare lo sforamento della pagina
+                keepaspectratio
+            ]{ZLJ1JX~1.PNG}
+        };
+    \end{tikzpicture}
+    \caption{Diagramma UML di flusso di \texttt{controlli\_statici.S}}
+    \label{fig:immagine_2}
+\end{figure}
+
+
+% --- TERZA IMMAGINE (Orizzontale) ---
+\begin{landscape}
+    \begin{figure}[p] 
+        \centering
+        \begin{tikzpicture}
+            \node[
+                blur shadow={shadow blur steps=10, shadow xshift=0pt, shadow yshift=0pt},
+                inner sep=0pt
+            ] {
+                \includegraphics[
+                    width=\linewidth,
+                    height=0.8\textheight, % Sfrutta al massimo la pagina landscape
+                    keepaspectratio
+                ]{HPNXRK~1.PNG}
+            };
+        \end{tikzpicture}
+        \caption{Diagramma UML di flusso di \texttt{controllo\_dinamico\_loop.S}}
+        \label{fig:immagine_3}
+    \end{figure}
+\end{landscape}
+\section{La repository GitHub \faGithub}
+\noindent
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=1\textwidth]{Immagine 2026-04-04 132333.png}}
+    \end{tikzpicture}
+    \label{fig:tut3}
+\end{figure}
+Tutto il codice descritto è visionabile e scaricabile al seguente link:
+\href{https://github.com/daromacarlo/RISC-Visore}{RISC-Visore}
+\begin{figure}[H]
+    \centering
+        {\includegraphics[width=0.5
+\textwidth]{frame.png}}
+    \label{fig:tut3}
+\end{figure}
+\chapter{Gli esercizi}
+\textit{Segue una sezione che illustra le principali categorie di esercizi possibili.}
+\label{chap:1} 
+\section{Tipologia 1.}
+\noindent
+Come prima categoria di esercizi è possibile chiedere a chi vuole imparare il linguaggio di scrivere semplice codice assembly RISC-V.\\L’obiettivo è caricare nel registro \texttt{a0} un valore che rappresenti la durata di accensione di un LED, mentre nel registro \texttt{a1} deve essere caricato un array di bit che specifica i LED da attivare.\\ \newline Il codice prodotto dovrà essere caricato tramite MODALITÀ ASSEMBLY in \texttt{caricatore.py} e l'esito è visualizzabile da console e interfaccia LED\\ \newline
+\textbf{Traccia1}.\\
+Scrivere un programma in assembly RISC-V che, dato un vettore di word, faccia accendere il LED $x$ per un tempo pari a $y + 1000$ ms, dove:
+\begin{itemize}
+    \item $x$ è il valore massimo nel vettore
+    \item $y$ è il valore minimo nel vettore
+\end{itemize}
+
+Vettore:
+\begin{verbatim}
+.word 15, 20, 42, 90, 88, 1, 40
+\end{verbatim}
+\\
+\newline
+\begingroup
+\color{green!40!black}
+\textbf{Possibile soluzione:}
+
+\begin{lstlisting}
+.globl main
+
+.data
+vettore:    .word 15, 20, 42, 90, 88, 1, 40
+
+.text
+main:
+
+    la t0, vettore     # puntatore al vettore
+    li t1, 7           # numero elementi
+
+    lw a0, 0(t0)       # massimo iniziale
+    lw a1, 0(t0)       # minimo iniziale
+
+    addi t0, t0, 4     
+    addi t1, t1, -1    
+
+loop:
+    blez t1, END
+
+    lw t2, 0(t0)       
+
+    ble t2, a0, check_min
+    mv a0, t2          # aggiorna massimo
+    j skip_update    
+
+check_min:
+    bge t2, a1, skip_update 
+    mv a1, t2          # aggiorna minimo
+
+skip_update:
+    addi t0, t0, 4
+    addi t1, t1, -1
+    j loop             
+
+END:
+    addi a0, a0, 1000  # tempo = minimo + 1000 ms
+\end{lstlisting}
+\endgroup
+\section{Tipologia 1. \color{black !50}{con test multipli.}}
+\noindent
+Può essere chiesto di scrivere semplice codice assembly RISC-V.\\L’obiettivo è caricare nel registro \texttt{a0} un valore che rappresenti la durata di accensione di un LED, mentre nel registro \texttt{a1} deve essere caricato un array di bit che specifica i LED da attivare.\\ \newline Questo codice viene testato con .data diversi, Il codice prodotto dovrà essere caricato tramite MODALITÀ MULTIPLA insieme ai vari .data con cui si vuole provare il codice in \texttt{caricatore.py} e l'esito è visualizzabile da console e interfaccia LED\\ \newline
+\textbf{Traccia1}.\\
+Scrivere un programma in assembly RISC-V che, dato un vettore di word, faccia accendere il LED $x$ per un tempo pari a $y + 1000$ ms, dove:
+\begin{itemize}
+    \item $x$ è il valore massimo nel vettore
+    \item $y$ è il valore minimo nel vettore
+\end{itemize}
+
+Input:
+\begin{verbatim}
+Vettore: .word 15, 20, 42, 90, 88, 1, 40;
+Vettore: .word 15, 20, 42, 900, 88, 1, 40;
+Vettore: .word 15, 20, 42, 9000, 88, 1, 40
+\end{verbatim}
+\\
+\newline
+\begingroup
+\color{green!40!black}
+\textbf{Possibile soluzione:}
+
+\begin{lstlisting}
+.globl main
+
+.data
+
+.text
+main:
+
+    la t0, vettore     # puntatore al vettore
+    li t1, 7           # numero elementi
+
+    lw a0, 0(t0)       # massimo iniziale
+    lw a1, 0(t0)       # minimo iniziale
+
+    addi t0, t0, 4     
+    addi t1, t1, -1    
+
+loop:
+    blez t1, END
+
+    lw t2, 0(t0)       
+
+    ble t2, a0, check_min
+    mv a0, t2          # aggiorna massimo
+    j skip_update    
+
+check_min:
+    bge t2, a1, skip_update 
+    mv a1, t2          # aggiorna minimo
+
+skip_update:
+    addi t0, t0, 4
+    addi t1, t1, -1
+    j loop             
+
+END:
+    addi a0, a0, 1000  # tempo = minimo + 1000 ms
+\end{lstlisting}
+\endgroup
+\section{Tipologia 2.}
+\noindent
+Come secondo tipo di esercizio può essere proposto di modificare il \texttt{.data} per ottenere un certo effetto sui led della scheda, la difficoltà dell'esercizio risiede nella comprensione del codice assembly fornito. Il codice modificato dovrà essere caricato tramite MODALITÀ ASSEMBLY in \texttt{caricatore.py} e l'esito è visualizzabile da console e interfaccia \texttt{LED}\\ \newline
+\noindent
+\textbf{Traccia 1}.\\
+Modifica la sezione \texttt{.data} del seguente programma in assembly RISC-V in modo tale 
+che venga acceso il led 9 della ESP per 1005ms. NON PUOI MODIFICARE IL \texttt{.text} E IL VETTORE IN INPUT DEVE RIMANERE DELLA STESSA LUNGHEZZA.
+
+\begin{lstlisting}
+.globl main
+
+.data
+vettore:    .word 15, 20, 42, 90, 88, 10, 40
+
+.text
+main:
+
+    la t0, vettore    
+    li t1, 7          
+
+    lw a0, 0(t0)      
+    lw a1, 0(t0)     
+
+    addi t0, t0, 4     
+    addi t1, t1, -1    
+
+loop:
+    blez t1, END
+
+    lw t2, 0(t0)
+
+    ble t2, a0, check_min
+    mv a1, t2   
+    j skip_update
+
+check_min:
+    bge t2, a0, skip_update
+    mv a0, t2   
+
+skip_update:
+    addi t0, t0, 4
+    addi t1, t1, -1
+    j loop
+
+END:
+    addi a0, a0, 1000 
+\end{lstlisting}
+\begingroup
+\color{green!40!black}
+\textbf{Possibile soluzione:}
+
+
+\begin{lstlisting}
+.globl main
+
+.data
+vettore:    .word 5, 512, 5, 6, 6, 6, 7
+
+.text
+main:
+
+    la t0, vettore    
+    li t1, 7          
+
+    lw a0, 0(t0)       
+    lw a1, 0(t0)     
+
+    addi t0, t0, 4     
+    addi t1, t1, -1    
+
+loop:
+    blez t1, END
+
+    lw t2, 0(t0)       
+
+    ble t2, a0, check_min
+    mv a0, t2   
+    j skip_update    
+
+check_min:
+    bge t2, a1, skip_update 
+    mv a1, t2
+
+skip_update:
+    addi t0, t0, 4
+    addi t1, t1, -1
+    j loop             
+
+END:
+    addi a0, a0, 1000
+\end{lstlisting}
+\endgroup
+\section{Tipologia 3.}
+\noindent
+\noindent
+Come terzo tipo di esercizio può essere proposto di modificare il \texttt{text} di un programma Assembly RISC-V per evitare che questo vada in loop infinito quando eseguito. La difficoltà di tale tipologia di esercizi sta nel riuscire a modificare stando attenti alle limitazioni imposte dalla consegna, Possono essere posti limiti su quante operazioni è possibile modificare, eliminare o aggiungere. Il codice modificato dovrà essere caricato tramite MODALITÀ ASSEMBLY in \texttt{caricatore.py} e l'esito è visualizzabile da console e interfaccia \texttt{LED}\\ \newline
+
+\noindent
+\textbf{Traccia 1}.\\
+Si consideri il seguente programma in assembly RISC-V:
+
+\begin{lstlisting}
+
+.globl main
+
+.text
+main:
+j step1
+	
+END:
+    j REAL_END
+    j step1
+    j step2
+
+step1:
+    j step2
+
+step2:
+    j check
+    j END 
+
+step3:
+    j check
+
+step4:
+
+check:
+    beq zero, zero, loop
+
+loop:
+    j again
+
+again:
+    j step1
+
+REAL_END:
+    addi a0, a0, 1000 
+    addi a1, a1, 1024
+\end{lstlisting}
+Il programma attualmente entra in un loop infinito a causa della struttura dei salti.
+
+\medskip
+\noindent
+Modificare il programma in maniera minimale, cioè aggiungendo, rimuovendo o modificando il minor numero di operazioni possibili e in modo tale che:
+\begin{itemize}
+    \item Il flusso venga eseguito una sola volta passando attraverso le varie etichette \texttt{step1}, \texttt{step2}, \texttt{step3}, \texttt{check}
+    \item Il programma termini correttamente all’etichetta \texttt{REAL\_END}
+    \item Non venga utilizzato alcun loop infinito o salto ciclico
+    \item È consentito modificare, aggiungere o rimuovere solo le istruzioni di salto \texttt{j}, \texttt{beq}
+    \item Non è consentito aggiungere istruzioni di memoria o modificare la logica aritmetica
+    \item Il numero di etichette deve rimanere invariato
+\end{itemize}
+
+\medskip
+\noindent
+\textbf{IL NUMERO MASSIMO DI MODIFICHE CHE PUOI EFFETTUARE È 5}
+
+\\
+\newline
+\begingroup
+\color{green!40!black}
+\noindent
+\textbf{Possibile soluzione:}
+
+
+\begin{lstlisting}
+.globl main
+
+.text
+main:
+j step1
+	
+END:
+    j REAL_END
+    j step1
+    j step2
+
+step1:
+    j step2
+
+step2:
+    j check
+    j END 
+
+step3:
+    j check
+
+step4:
+    J loop
+check:
+    j step3
+    beq zero, zero, loop
+
+loop:
+    j again
+
+again:
+    j END
+    j step1
+
+REAL_END:
+    addi a0, a0, 1000 
+    addi a1, a1, 1024
+\end{lstlisting}
+\endgroup
+\section{Tipologia 4.}
+\noindent
+\noindent
+Come quarto tipo di esercizio può essere proposto di modificare il digest di un programma Assembly RISC-V per evitare che questo presenti errori di vario tipo. La difficoltà di tale tipologia di esercizi sta nel riuscire a modificare il programma byte per byte, è questa un'operazione molto di basso livello. Il digest modificato dovrà essere caricato tramite MODALITÀ IMMEDIATA in \texttt{caricatore.py} e l'esito è visualizzabile solo da interfaccia \texttt{LED}\\ \newline
+\noindent
+\textbf{Traccia 1}.\\
+Si consideri il seguente programma:
+
+\begin{lstlisting}
+.globl main
+
+.text
+
+	main:
+	li a0, 6000
+	li a1, 10
+
+\end{lstlisting}
+
+il cui digest è
+\begin{lstlisting}
+37150000130505779305a00000
+\end{lstlisting}
+Il programma digest presentato attualmente presenta errori, identificarli tramite l'interfaccia \texttt{LED} e risolverli.\\
+Si ricorda che la formattazione è \texttt{Little endian}
+
+\medskip
+\noindent
+Modificare il programma in maniera minimale, cioè aggiungendo, rimuovendo o modificando il minor numero di operazioni possibili, Risolvere i problemi in ordine in base a come vengono segnalati.
+\noindent
+\newline
+\textbf{IL NUMERO MASSIMO DI MODIFICHE CHE PUOI EFFETTUARE È 1}
+\newline
+\\
+\newline
+\begingroup
+\color{green!40!black}
+\noindent
+\textbf{Possibile soluzione:}
+La scheda segnala un errore di tipo 2, infatti il led integrato lampeggia 2 volte lentamente e poi lampeggia per 5 secondi velocemente, significa che siamo davanti ad un errore di word intere, dobbiamo quindi eliminare dei bit superflui.
+\\ Il digest modificato corretto sarà:
+\begin{lstlisting}
+37150000130505779305a000
+\end{lstlisting}
+\endgroup
+\noindent
+\textit{Per modificare gli hex è consigliato scaricare \textit{Free Hex Editor Neo}}
+\label{chap:2} 
+\section{L'eserciziario}
+\noindent
+Nella sezione RISC-Visore/validator/test sono disponibili svariati esercizi divisi per categoria.
+\\
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[blur shadow={shadow blur steps=5,shadow xshift=0pt,shadow yshift=0pt}] 
+        {\includegraphics[width=0.6\textwidth]{Immagine 2026-05-04 193026.png}};
+    \end{tikzpicture}
+
+    \label{fig:simulaB4}
+\end{figure}
+\\
+
+\chapter{Conclusioni}
+
+\label{chap:1} 
+\section{Difficoltà incontrate}
+\noindent
+Durante lo sviluppo del progetto sono emerse diverse difficoltà. In particolare, la gestione diretta dei LED tramite codice assembly si è rivelata complessa ed imprecisa, richiede la temporizzazione tramite clock della scheda e molte righe di codice, per questo nel mio programma ho preferito gestire i LED nello strato più superficiale. 
+\\
+Un’ulteriore criticità è stata la gestione del puntatore al programma caricato riscv1.S. È possibile su queste schede puntare un programma e richiamarlo dinamicamente ma la gestione di questo puntatore è molto articolata quindi ho preferito ricompilare ogni volta che un nuovo programma assembly viene caricato
+
+\label{chap:2} 
+\section{Sviluppi possibili}
+\noindent
+Il codice sviluppato rappresenta un punto di partenza per la realizzazione di una vera e propria macchina virtuale RISC-V. 
+Un'importante miglioria sarebbe l’integrazione della sezione \texttt{.data}, che permetterebbe la gestione di variabili statiche e strutture dati direttamente in memoria, avvicinando ulteriormente il sistema al comportamento di un ambiente di esecuzione reale.
+
+
+\backmatter
+\phantomsection
+\begin{thebibliography}{99}
+
+\bibitem{tartaglione} 
+R. Tartaglione, \textit{Generazione e correzione automatizzata di esercizi di sistemi di memoria cache}, Strumenti didattici per l'Architettura degli Elaboratori.
+
+\bibitem{ziegler} 
+M. Ziegler, \textit{Simulatore MIPS orientato all'analisi e all'apprendimento delle dinamiche del pipelining}, Software Didattico Interattivo.
+
+\bibitem{acm_riscv_edu} 
+D. A. Patterson e J. L. Hennessy, \textit{RISC-V as the New Standard for Computer Architecture Education}, ACM Digital Library. \\
+\url{https://dl.acm.org/doi/abs/10.1145/3445034.3460508}
+
+\bibitem{ieee_cloud_sim} 
+IEEE Xplore, \textit{Cloud-Based Web Simulators for Computer Architecture Instruction}. \\
+\url{https://ieeexplore.ieee.org/abstract/document/9071132}
+
+\bibitem{sciencedirect_sim} 
+ScienceDirect, \textit{Visual Simulation Frameworks for RISC-V Pipeline and Datapath Analysis}, Journal of Systems Architecture. \\
+\url{https://www.sciencedirect.com/science/article/pii/S1383762122002429}
+
+\bibitem{woset_micro} 
+WOSET Workshop, \textit{The Educational RISC-V Micro: Designing Custom Cores for FPGA Synthesizable Laboratories}. \\
+\url{https://woset-workshop.github.io/PDFs/2024/9_The_Educational_RISC_V_Micro.pdf}
+
+\bibitem{iated_fpga} 
+IATED Digital Library, \textit{FPGA-Based RISC-V Core Implementation in Undergraduate Computer Engineering Courses}. \\
+\url{https://library.iated.org/view/SPRANG2024FPG}
+
+\bibitem{mdpi_computers} 
+MDPI Computers, \textit{Integrating Real-World RISC-V Microcontrollers in IoT and Edge Computing Higher Education}. \\
+\url{https://www.mdpi.com/2079-9268/12/3/45}
+
+\bibitem{ieee_embedded_edu} 
+IEEE Xplore, \textit{Hands-on Embedded Systems Labs: Shifting from Pure Simulation to Affordable Commercial Hardware}. \\
+\url{https://ieeexplore.ieee.org/abstract/document/10540579}
+
+\end{thebibliography}
+
+\end{document}
