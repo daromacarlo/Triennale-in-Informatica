@@ -27,7 +27,7 @@ Raccolta di materiale didattico, appunti, esercizi e progetti relativi al corso 
 
 ## Materie
 
-| Matematica & Teoria | Programmazione | Sistemi & Reti | Dati & Sicurezza |
+| | | | |
 | :------------------ | :------------- | :------------- | :--------------- |
 | [Algebra](./Algebra) | [Fondamenti di Programmazione](./Fondamenti%20di%20Programmazione) | [Architettura degli Elaboratori](./Architetture%20degli%20elaboratori) | [Basi di Dati](./Basi%20di%20dati) |
 | [Probabilità](./Probabilità) | [Algoritmi](./Algoritmi) | [Sistemi Operativi](./Sistemi%20operativi) | [Sicurezza](./Sicurezza) |
